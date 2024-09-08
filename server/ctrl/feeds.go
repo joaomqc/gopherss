@@ -5,7 +5,7 @@ import "github.com/gin-gonic/gin"
 type FeedsController struct{}
 
 func (c FeedsController) Register(r *gin.Engine) {
-	group := r.Group("/feeds")
+	group := r.Group("/feed")
 
 	group.GET("/", c.getAll)
 	group.POST("/", c.create)

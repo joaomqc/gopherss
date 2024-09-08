@@ -5,7 +5,7 @@ import "github.com/gin-gonic/gin"
 type CategoriesController struct{}
 
 func (c CategoriesController) Register(r *gin.Engine) {
-	group := r.Group("/categories")
+	group := r.Group("/category")
 
 	group.GET("/", c.getAll)
 	group.POST("/", c.create)

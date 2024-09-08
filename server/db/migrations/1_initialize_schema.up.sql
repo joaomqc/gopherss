@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS Articles (
+CREATE TABLE IF NOT EXISTS Entries (
     id INTEGER NOT NULL PRIMARY KEY,
     title TEXT,
     content TEXT,

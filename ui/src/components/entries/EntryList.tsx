@@ -36,7 +36,7 @@ const ArticleReadButton = () => {
   );
 };
 
-export const ArticleList = () => {
+export const EntryList = () => {
   const filters: { [key: string]: any } = {};
   const location = useLocation();
   const search = location.search.slice(1);

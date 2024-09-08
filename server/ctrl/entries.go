@@ -7,9 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ArticlesController struct{}
+type EntriesController struct{}
 
-var articlesRepository = db.ArticlesRepository{}
+var entriesRepository = db.EntriesRepository{}
 
 type Query struct {
 	BaseQuery
@@ -17,8 +17,8 @@ type Query struct {
 	Feed     string `form:"feed"`
 }
 
-func (c ArticlesController) Register(r *gin.Engine) {
-	group := r.Group("/articles")
+func (c EntriesController) Register(r *gin.Engine) {
+	group := r.Group("/entry")
 
 	group.GET("/", c.getAll)
 	group.POST("/", c.create)
@@ -26,29 +26,29 @@ func (c ArticlesController) Register(r *gin.Engine) {
 	group.DELETE("/", c.delete)
 }
 
-func (c ArticlesController) getAll(ctx *gin.Context) {
+func (c EntriesController) getAll(ctx *gin.Context) {
 	query := Query{}
 	err := ctx.BindQuery(&query)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	articles, err := articlesRepository.GetAll()
+	entries, err := entriesRepository.GetAll()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, articles)
+	ctx.JSON(http.StatusOK, entries)
 }
 
-func (c ArticlesController) create(ctx *gin.Context) {
-
-}
-
-func (c ArticlesController) update(ctx *gin.Context) {
+func (c EntriesController) create(ctx *gin.Context) {
 
 }
 
-func (c ArticlesController) delete(ctx *gin.Context) {
+func (c EntriesController) update(ctx *gin.Context) {
+
+}
+
+func (c EntriesController) delete(ctx *gin.Context) {
 
 }

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Article struct {
+type Entry struct {
 	Id          int
 	Title       string
 	Content     string

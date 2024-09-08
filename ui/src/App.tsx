@@ -4,16 +4,16 @@ import {
   CategoryEdit,
   CategoryList,
   CategoryShow,
-} from "./components/category";
+} from "./components/categories";
 import { FeedEdit, FeedList, FeedShow } from "./components/feeds";
-import { ArticleList } from "./components/article";
+import { EntryList } from "./components/entries";
 import { MyLayout } from "./components/MyLayout";
 import RssFeed from "@mui/icons-material/RssFeed";
 import Label from "@mui/icons-material/Label";
 
 export const App = () => (
   <Admin title="gopherss" dataProvider={dataProvider} layout={MyLayout}>
-    <Resource name="articles" list={ArticleList} />
+    <Resource name="entries" list={EntryList} />
     <Resource
       name="categories"
       edit={CategoryEdit}

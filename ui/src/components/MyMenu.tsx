@@ -26,7 +26,7 @@ export const MyMenu = () => {
 
   return (
     <Menu>
-      <Menu.ResourceItem name="articles" />
+      <Menu.ResourceItem name="entries" />
       <Menu.ResourceItem name="categories" />
       <Menu.ResourceItem name="feeds" />
       <Divider />
@@ -36,13 +36,13 @@ export const MyMenu = () => {
             selected={location.search == `?category=${category.name}`}
             key={category.id}
             primaryText={category.name}
-            to={`/articles?category=${category.name}`}
+            to={`/entry?category=${category.name}`}
           >
             {category.feeds.map((feed: any) => (
               <Menu.Item
                 selected={location.search == `?feed=${feed.name}`}
                 key={feed.id}
-                to={`/articles?feed=${feed.name}`}
+                to={`/entry?feed=${feed.name}`}
                 primaryText={feed.name}
               />
             ))}

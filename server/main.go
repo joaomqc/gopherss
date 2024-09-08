@@ -9,7 +9,7 @@ import (
 )
 
 var ctrls = []ctrl.Controller{
-	ctrl.ArticlesController{},
+	ctrl.EntriesController{},
 	ctrl.CategoriesController{},
 	ctrl.FeedsController{},
 }
