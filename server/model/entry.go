@@ -18,3 +18,8 @@ type Entry struct {
 	OriginalId  string
 	FeedId      int
 }
+
+type UpdateEntries struct {
+	Ids    []int
+	Status Status
+}

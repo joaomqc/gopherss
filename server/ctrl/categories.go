@@ -101,5 +101,5 @@ func (c CategoriesController) mark(ctx *gin.Context) {
 // @Failure		404						{object}	httputil.HTTPError
 // @Router			/category/{id}/refresh	[post]
 func (c CategoriesController) refresh(ctx *gin.Context) {
-	// refresh all feeds in category
+
 }
