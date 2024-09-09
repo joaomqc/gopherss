@@ -22,11 +22,17 @@ func (c EntriesController) Register(r *gin.Engine) {
 
 	group.GET("/", c.getAll)
 	group.POST("/", c.create)
-	group.PUT("/", c.update)
-	group.DELETE("/", c.delete)
+	group.PUT("/", c.updateMany)
+	group.POST("/read", c.markAllAsRead)
+	group.GET("/:id", c.get)
+	group.PUT("/:id", c.update)
+	group.DELETE("/:id", c.delete)
+	group.POST("/:id/star", c.star)
+	group.POST("/:id/read", c.markAsRead)
 }
 
 func (c EntriesController) getAll(ctx *gin.Context) {
+	// &(feed|category)=&limit=&starred=&read=&search=&offset=
 	query := Query{}
 	err := ctx.BindQuery(&query)
 	if err != nil {
@@ -45,10 +51,30 @@ func (c EntriesController) create(ctx *gin.Context) {
 
 }
 
+func (c EntriesController) updateMany(ctx *gin.Context) {
+	// body: {"entries": [1,2,3],"status":"read"}
+}
+
+func (c EntriesController) markAllAsRead(ctx *gin.Context) {
+	// ?before= mark as read/unread up to timestamp
+}
+
+func (c EntriesController) get(ctx *gin.Context) {
+
+}
+
 func (c EntriesController) update(ctx *gin.Context) {
 
 }
 
 func (c EntriesController) delete(ctx *gin.Context) {
+
+}
+
+func (c EntriesController) star(ctx *gin.Context) {
+
+}
+
+func (c EntriesController) markAsRead(ctx *gin.Context) {
 
 }
