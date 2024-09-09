@@ -28,7 +28,7 @@ definitions:
       title:
         type: string
     type: object
-host: localhost:8889
+host: localhost:8080
 info:
   contact: {}
   description: RSS feed management app

@@ -15,7 +15,7 @@ import (
 //	@title			Gopherss API
 //	@version		1.0
 //	@description	RSS feed management app
-//	@host			localhost:8889
+//	@host			localhost:8080
 //	@BasePath		/api
 
 var ctrls = []ctrl.Controller{
@@ -43,6 +43,6 @@ func main() {
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.Run(":8889")
+	r.Run()
 	sqlDb.Close()
 }
