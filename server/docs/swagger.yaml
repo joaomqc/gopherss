@@ -1,0 +1,184 @@
+basePath: /api
+definitions:
+  httputil.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  model.AddCategory:
+    properties:
+      title:
+        type: string
+    type: object
+  model.Category:
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+  model.UpdateCategory:
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+host: localhost:8889
+info:
+  contact: {}
+  description: RSS feed management app
+  title: Gopherss API
+  version: "1.0"
+paths:
+  /category:
+    get:
+      description: get categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Category'
+            type: array
+      summary: List categories
+      tags:
+      - category
+    post:
+      consumes:
+      - application/json
+      description: create category
+      parameters:
+      - description: Add category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create category
+      tags:
+      - category
+  /category/{id}:
+    delete:
+      description: delete category
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete category
+      tags:
+      - category
+    get:
+      description: get category
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Category'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get category
+      tags:
+      - category
+    put:
+      consumes:
+      - application/json
+      description: update category
+      parameters:
+      - description: Update category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update category
+      tags:
+      - category
+  /category/{id}/mark:
+    post:
+      description: mark category entries as read/unread up to a timestamp
+      parameters:
+      - description: Timestamp to mark/unread as read to
+        example: '"2006-01-02 15:04:05"'
+        format: date-time
+        in: query
+        name: before
+        required: true
+        type: string
+      - description: New status
+        enum:
+        - read
+        - unread
+        in: query
+        name: as
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Mark as read/unread
+      tags:
+      - category
+  /category/{id}/refresh:
+    post:
+      description: refresh all feeds in the category
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Refresh feeds
+      tags:
+      - category
+swagger: "2.0"

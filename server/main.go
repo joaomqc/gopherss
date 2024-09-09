@@ -5,8 +5,18 @@ import (
 	"gopherss/db"
 	"log"
 
+	_ "gopherss/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+//	@title			Gopherss API
+//	@version		1.0
+//	@description	RSS feed management app
+//	@host			localhost:8889
+//	@BasePath		/api
 
 var ctrls = []ctrl.Controller{
 	ctrl.EntriesController{},
@@ -27,10 +37,12 @@ func main() {
 
 	r := gin.Default()
 
+	apiGroup := r.Group("/api")
 	for _, controller := range ctrls {
-		controller.Register(r)
+		controller.Register(apiGroup)
 	}
 
-	r.Run()
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.Run(":8889")
 	sqlDb.Close()
 }
