@@ -4,6 +4,7 @@ import (
 	"errors"
 	"gopherss/db"
 	"gopherss/httputil"
+	"gopherss/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,15 +13,6 @@ import (
 type EntriesController struct{}
 
 var entriesRepository = db.EntriesRepository{}
-
-type EntryListQuery struct {
-	BaseQuery
-	Category *int    `form:"category"`
-	Feed     *int    `form:"feed"`
-	Starred  *bool   `form:"starred"`
-	Read     *bool   `form:"read"`
-	Search   *string `form:"search"`
-}
 
 func (c EntriesController) Register(r *gin.RouterGroup) {
 	group := r.Group("/entry")
@@ -40,25 +32,25 @@ func (c EntriesController) Register(r *gin.RouterGroup) {
 //	@Description	get entries
 //	@Tags			entry
 //	@Produce		json
-//	@Param			category	query	int		false	"Category id"
-//	@Param			feed		query	int		false	"Feed id"
-//	@Param			starred		query	bool	false	"Show starred only"
-//	@Param			read		query	bool	false	"Show read/unread only"
-//	@Param			search		query	string	false	"Search text"
-//	@Param			offset		query	int		false	"Query offset"
-//	@Param			limit		query	int		false	"Max entries to return"
-//	@Param			order		query	string	false	"Property to order by"
-//	@Param			sort		query	int		false	"Sort ascending/descending"
+//	@Param			category	query	int				false	"Category id"
+//	@Param			feed		query	int				false	"Feed id"
+//	@Param			starred		query	bool			false	"Show starred only"
+//	@Param			read		query	bool			false	"Show read/unread only"
+//	@Param			search		query	string			false	"Search text"
+//	@Param			offset		query	int				false	"Query offset"
+//	@Param			limit		query	int				false	"Max entries to return"
+//	@Param			order		query	string			false	"Property to order by"
+//	@Param			sort		query	model.SortType	false	"Sort ascending/descending"
 //	@Success		200			{array}	model.Entry
-//	@Router			/entry																																																										[get]
+//	@Router			/entry																																																																		[get]
 func (c EntriesController) list(ctx *gin.Context) {
-	query := EntryListQuery{}
+	query := model.EntryListQuery{}
 	err := ctx.BindQuery(&query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	entries, err := entriesRepository.GetAll()
+	entries, err := entriesRepository.GetAll(query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return

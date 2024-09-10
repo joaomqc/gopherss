@@ -14,6 +14,7 @@ type Entry struct {
 	PublishedOn time.Time
 	CollectedOn time.Time
 	IsRead      bool
+	IsStarred   bool
 	Category    string
 	OriginalId  string
 	FeedId      int
@@ -35,4 +36,13 @@ type UpdateEntry struct {
 	Category    *string
 	OriginalId  *string
 	FeedId      *int
+}
+
+type EntryListQuery struct {
+	BaseQuery
+	Category *int    `form:"category"`
+	Feed     *int    `form:"feed"`
+	Starred  *bool   `form:"starred"`
+	Read     *bool   `form:"read"`
+	Search   *string `form:"search"`
 }

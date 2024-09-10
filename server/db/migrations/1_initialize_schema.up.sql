@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS Entries (
     published_on TEXT,
     collected_on TEXT,
     is_read INTEGER,
+    is_starred INTEGER,
     category TEXT,
     original_id TEXT,
     feed_id INTEGER
