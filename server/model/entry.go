@@ -23,3 +23,16 @@ type UpdateEntries struct {
 	Ids    []int
 	Status Status
 }
+
+type UpdateEntry struct {
+	Title       *string
+	Content     *string
+	Link        *url.URL
+	Author      *string
+	PublishedOn *time.Time
+	CollectedOn *time.Time
+	IsRead      *bool
+	Category    *string
+	OriginalId  *string
+	FeedId      *int
+}

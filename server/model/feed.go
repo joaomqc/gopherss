@@ -10,3 +10,19 @@ type Feed struct {
 	CategoryId int
 	Visibility Visibility
 }
+
+type AddFeed struct {
+	Title      string
+	FeedUrl    url.URL
+	WebsiteUrl url.URL
+	CategoryId int
+	Visibility Visibility
+}
+
+type UpdateFeed struct {
+	Title      *string
+	FeedUrl    *url.URL
+	WebsiteUrl *url.URL
+	CategoryId *int
+	Visibility *Visibility
+}

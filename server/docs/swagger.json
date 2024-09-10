@@ -161,14 +161,128 @@
                 }
             }
         },
-        "/category/{id}/mark": {
-            "post": {
-                "description": "mark category entries as read/unread up to a timestamp",
+        "/entry": {
+            "get": {
+                "description": "get entries",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
-                    "category"
+                    "entry"
+                ],
+                "summary": "List entries",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category id",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Feed id",
+                        "name": "feed",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Show starred only",
+                        "name": "starred",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Show read/unread only",
+                        "name": "read",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search text",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Max entries to return",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Query offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Entry"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update entries",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entry"
+                ],
+                "summary": "Update entries",
+                "parameters": [
+                    {
+                        "description": "Update entries",
+                        "name": "entries",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateEntries"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/entry/mark": {
+            "post": {
+                "description": "mark entries as read/unread up to a timestamp",
+                "tags": [
+                    "entry"
                 ],
                 "summary": "Mark as read/unread",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category id",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Feed id",
+                        "name": "feed",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "format": "date-time",
@@ -209,13 +323,357 @@
                 }
             }
         },
-        "/category/{id}/refresh": {
-            "post": {
-                "description": "refresh all feeds in the category",
+        "/entry/{id}": {
+            "get": {
+                "description": "get entry",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
-                    "category"
+                    "entry"
+                ],
+                "summary": "Get entry",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Entry"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update entry",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entry"
+                ],
+                "summary": "Update entry",
+                "parameters": [
+                    {
+                        "description": "Update entry",
+                        "name": "entry",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateEntry"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Entry"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete entry",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "entry"
+                ],
+                "summary": "Delete entry",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/entry/{id}/mark": {
+            "post": {
+                "description": "mark entry as read/unread",
+                "tags": [
+                    "entry"
+                ],
+                "summary": "Mark as read/unread",
+                "parameters": [
+                    {
+                        "enum": [
+                            "read",
+                            "unread"
+                        ],
+                        "type": "string",
+                        "description": "New status",
+                        "name": "as",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/feed": {
+            "get": {
+                "description": "get feeds",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feed"
+                ],
+                "summary": "List feeds",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category id",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Feed"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create feed",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Create feed",
+                "parameters": [
+                    {
+                        "description": "Add feed",
+                        "name": "feed",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AddFeed"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Feed"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/feed/refresh": {
+            "post": {
+                "description": "refresh all feeds",
+                "tags": [
+                    "feed"
                 ],
                 "summary": "Refresh feeds",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category id",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/feed/{id}": {
+            "get": {
+                "description": "get feed",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Get feed",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Feed"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update feed",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Update feed",
+                "parameters": [
+                    {
+                        "description": "Update feed",
+                        "name": "feed",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateFeed"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Feed"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete feed",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Delete feed",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/feed/{id}/icon": {
+            "get": {
+                "description": "get feed icon",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Get feed icon",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Feed"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/feed/{id}/refresh": {
+            "post": {
+                "description": "refresh feed",
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Refresh feed",
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -252,6 +710,26 @@
                 }
             }
         },
+        "model.AddFeed": {
+            "type": "object",
+            "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
+                "feedUrl": {
+                    "$ref": "#/definitions/url.URL"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "$ref": "#/definitions/model.Visibility"
+                },
+                "websiteUrl": {
+                    "$ref": "#/definitions/url.URL"
+                }
+            }
+        },
         "model.Category": {
             "type": "object",
             "properties": {
@@ -263,6 +741,78 @@
                 }
             }
         },
+        "model.Entry": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "collectedOn": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "feedId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isRead": {
+                    "type": "boolean"
+                },
+                "link": {
+                    "$ref": "#/definitions/url.URL"
+                },
+                "originalId": {
+                    "type": "string"
+                },
+                "publishedOn": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Feed": {
+            "type": "object",
+            "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
+                "feedUrl": {
+                    "$ref": "#/definitions/url.URL"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "$ref": "#/definitions/model.Visibility"
+                },
+                "websiteUrl": {
+                    "$ref": "#/definitions/url.URL"
+                }
+            }
+        },
+        "model.Status": {
+            "type": "string",
+            "enum": [
+                "read",
+                "unread"
+            ],
+            "x-enum-varnames": [
+                "Read",
+                "Unread"
+            ]
+        },
         "model.UpdateCategory": {
             "type": "object",
             "properties": {
@@ -273,6 +823,143 @@
                     "type": "string"
                 }
             }
+        },
+        "model.UpdateEntries": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/model.Status"
+                }
+            }
+        },
+        "model.UpdateEntry": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "collectedOn": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "feedId": {
+                    "type": "integer"
+                },
+                "isRead": {
+                    "type": "boolean"
+                },
+                "link": {
+                    "$ref": "#/definitions/url.URL"
+                },
+                "originalId": {
+                    "type": "string"
+                },
+                "publishedOn": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateFeed": {
+            "type": "object",
+            "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
+                "feedUrl": {
+                    "$ref": "#/definitions/url.URL"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "$ref": "#/definitions/model.Visibility"
+                },
+                "websiteUrl": {
+                    "$ref": "#/definitions/url.URL"
+                }
+            }
+        },
+        "model.Visibility": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "ShowVisibility",
+                "ShowInCategoryVisibility",
+                "DoNotShowVisibility"
+            ]
+        },
+        "url.URL": {
+            "type": "object",
+            "properties": {
+                "forceQuery": {
+                    "description": "append a query ('?') even if RawQuery is empty",
+                    "type": "boolean"
+                },
+                "fragment": {
+                    "description": "fragment for references, without '#'",
+                    "type": "string"
+                },
+                "host": {
+                    "description": "host or host:port (see Hostname and Port methods)",
+                    "type": "string"
+                },
+                "omitHost": {
+                    "description": "do not emit empty host (authority)",
+                    "type": "boolean"
+                },
+                "opaque": {
+                    "description": "encoded opaque data",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "path (relative paths may omit leading slash)",
+                    "type": "string"
+                },
+                "rawFragment": {
+                    "description": "encoded fragment hint (see EscapedFragment method)",
+                    "type": "string"
+                },
+                "rawPath": {
+                    "description": "encoded path hint (see EscapedPath method)",
+                    "type": "string"
+                },
+                "rawQuery": {
+                    "description": "encoded query values, without '?'",
+                    "type": "string"
+                },
+                "scheme": {
+                    "type": "string"
+                },
+                "user": {
+                    "description": "username and password information",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/url.Userinfo"
+                        }
+                    ]
+                }
+            }
+        },
+        "url.Userinfo": {
+            "type": "object"
         }
     }
 }

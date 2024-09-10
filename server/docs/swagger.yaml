@@ -14,6 +14,19 @@ definitions:
       title:
         type: string
     type: object
+  model.AddFeed:
+    properties:
+      categoryId:
+        type: integer
+      feedUrl:
+        $ref: '#/definitions/url.URL'
+      title:
+        type: string
+      visibility:
+        $ref: '#/definitions/model.Visibility'
+      websiteUrl:
+        $ref: '#/definitions/url.URL'
+    type: object
   model.Category:
     properties:
       id:
@@ -21,12 +34,153 @@ definitions:
       title:
         type: string
     type: object
+  model.Entry:
+    properties:
+      author:
+        type: string
+      category:
+        type: string
+      collectedOn:
+        type: string
+      content:
+        type: string
+      feedId:
+        type: integer
+      id:
+        type: integer
+      isRead:
+        type: boolean
+      link:
+        $ref: '#/definitions/url.URL'
+      originalId:
+        type: string
+      publishedOn:
+        type: string
+      title:
+        type: string
+    type: object
+  model.Feed:
+    properties:
+      categoryId:
+        type: integer
+      feedUrl:
+        $ref: '#/definitions/url.URL'
+      id:
+        type: integer
+      title:
+        type: string
+      visibility:
+        $ref: '#/definitions/model.Visibility'
+      websiteUrl:
+        $ref: '#/definitions/url.URL'
+    type: object
+  model.Status:
+    enum:
+    - read
+    - unread
+    type: string
+    x-enum-varnames:
+    - Read
+    - Unread
   model.UpdateCategory:
     properties:
       id:
         type: integer
       title:
         type: string
+    type: object
+  model.UpdateEntries:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+      status:
+        $ref: '#/definitions/model.Status'
+    type: object
+  model.UpdateEntry:
+    properties:
+      author:
+        type: string
+      category:
+        type: string
+      collectedOn:
+        type: string
+      content:
+        type: string
+      feedId:
+        type: integer
+      isRead:
+        type: boolean
+      link:
+        $ref: '#/definitions/url.URL'
+      originalId:
+        type: string
+      publishedOn:
+        type: string
+      title:
+        type: string
+    type: object
+  model.UpdateFeed:
+    properties:
+      categoryId:
+        type: integer
+      feedUrl:
+        $ref: '#/definitions/url.URL'
+      title:
+        type: string
+      visibility:
+        $ref: '#/definitions/model.Visibility'
+      websiteUrl:
+        $ref: '#/definitions/url.URL'
+    type: object
+  model.Visibility:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - ShowVisibility
+    - ShowInCategoryVisibility
+    - DoNotShowVisibility
+  url.URL:
+    properties:
+      forceQuery:
+        description: append a query ('?') even if RawQuery is empty
+        type: boolean
+      fragment:
+        description: fragment for references, without '#'
+        type: string
+      host:
+        description: host or host:port (see Hostname and Port methods)
+        type: string
+      omitHost:
+        description: do not emit empty host (authority)
+        type: boolean
+      opaque:
+        description: encoded opaque data
+        type: string
+      path:
+        description: path (relative paths may omit leading slash)
+        type: string
+      rawFragment:
+        description: encoded fragment hint (see EscapedFragment method)
+        type: string
+      rawPath:
+        description: encoded path hint (see EscapedPath method)
+        type: string
+      rawQuery:
+        description: encoded query values, without '?'
+        type: string
+      scheme:
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/url.Userinfo'
+        description: username and password information
+    type: object
+  url.Userinfo:
     type: object
 host: localhost:8080
 info:
@@ -135,10 +289,171 @@ paths:
       summary: Update category
       tags:
       - category
-  /category/{id}/mark:
-    post:
-      description: mark category entries as read/unread up to a timestamp
+  /entry:
+    get:
+      description: get entries
       parameters:
+      - description: Category id
+        in: query
+        name: category
+        type: integer
+      - description: Feed id
+        in: query
+        name: feed
+        type: integer
+      - description: Show starred only
+        in: query
+        name: starred
+        type: boolean
+      - description: Show read/unread only
+        in: query
+        name: read
+        type: boolean
+      - description: Search text
+        in: query
+        name: search
+        type: string
+      - description: Max entries to return
+        in: query
+        name: limit
+        type: integer
+      - description: Query offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Entry'
+            type: array
+      summary: List entries
+      tags:
+      - entry
+    put:
+      consumes:
+      - application/json
+      description: update entries
+      parameters:
+      - description: Update entries
+        in: body
+        name: entries
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateEntries'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update entries
+      tags:
+      - entry
+  /entry/{id}:
+    delete:
+      description: delete entry
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete entry
+      tags:
+      - entry
+    get:
+      description: get entry
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Entry'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get entry
+      tags:
+      - entry
+    put:
+      consumes:
+      - application/json
+      description: update entry
+      parameters:
+      - description: Update entry
+        in: body
+        name: entry
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateEntry'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Entry'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update entry
+      tags:
+      - entry
+  /entry/{id}/mark:
+    post:
+      description: mark entry as read/unread
+      parameters:
+      - description: New status
+        enum:
+        - read
+        - unread
+        in: query
+        name: as
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Mark as read/unread
+      tags:
+      - entry
+  /entry/mark:
+    post:
+      description: mark entries as read/unread up to a timestamp
+      parameters:
+      - description: Category id
+        in: query
+        name: category
+        type: integer
+      - description: Feed id
+        in: query
+        name: feed
+        type: integer
       - description: Timestamp to mark/unread as read to
         example: '"2006-01-02 15:04:05"'
         format: date-time
@@ -167,10 +482,150 @@ paths:
             $ref: '#/definitions/httputil.HTTPError'
       summary: Mark as read/unread
       tags:
-      - category
-  /category/{id}/refresh:
+      - entry
+  /feed:
+    get:
+      description: get feeds
+      parameters:
+      - description: Category id
+        in: query
+        name: category
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Feed'
+            type: array
+      summary: List feeds
+      tags:
+      - feed
     post:
-      description: refresh all feeds in the category
+      consumes:
+      - application/json
+      description: create feed
+      parameters:
+      - description: Add feed
+        in: body
+        name: feed
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddFeed'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Feed'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Create feed
+      tags:
+      - feed
+  /feed/{id}:
+    delete:
+      description: delete feed
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete feed
+      tags:
+      - feed
+    get:
+      description: get feed
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Feed'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get feed
+      tags:
+      - feed
+    put:
+      consumes:
+      - application/json
+      description: update feed
+      parameters:
+      - description: Update feed
+        in: body
+        name: feed
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateFeed'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Feed'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update feed
+      tags:
+      - feed
+  /feed/{id}/icon:
+    get:
+      description: get feed icon
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Feed'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get feed icon
+      tags:
+      - feed
+  /feed/{id}/refresh:
+    post:
+      description: refresh feed
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Refresh feed
+      tags:
+      - feed
+  /feed/refresh:
+    post:
+      description: refresh all feeds
+      parameters:
+      - description: Category id
+        in: query
+        name: category
+        type: integer
       responses:
         "204":
           description: No Content
@@ -180,5 +635,5 @@ paths:
             $ref: '#/definitions/httputil.HTTPError'
       summary: Refresh feeds
       tags:
-      - category
+      - feed
 swagger: "2.0"
