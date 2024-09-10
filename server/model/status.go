@@ -3,6 +3,6 @@ package model
 type Status string
 
 const (
-	Read   Status = "read"
-	Unread Status = "unread"
+	ReadStatus   Status = "read"
+	UnreadStatus Status = "unread"
 )

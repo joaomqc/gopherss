@@ -13,10 +13,13 @@ type EntriesController struct{}
 
 var entriesRepository = db.EntriesRepository{}
 
-type Query struct {
+type EntryListQuery struct {
 	BaseQuery
-	Category string `form:"category"`
-	Feed     string `form:"feed"`
+	Category *int    `form:"category"`
+	Feed     *int    `form:"feed"`
+	Starred  *bool   `form:"starred"`
+	Read     *bool   `form:"read"`
+	Search   *string `form:"search"`
 }
 
 func (c EntriesController) Register(r *gin.RouterGroup) {
@@ -42,12 +45,14 @@ func (c EntriesController) Register(r *gin.RouterGroup) {
 //	@Param			starred		query	bool	false	"Show starred only"
 //	@Param			read		query	bool	false	"Show read/unread only"
 //	@Param			search		query	string	false	"Search text"
-//	@Param			limit		query	int		false	"Max entries to return"
 //	@Param			offset		query	int		false	"Query offset"
+//	@Param			limit		query	int		false	"Max entries to return"
+//	@Param			order		query	string	false	"Property to order by"
+//	@Param			sort		query	int		false	"Sort ascending/descending"
 //	@Success		200			{array}	model.Entry
-//	@Router			/entry																																																								[get]
+//	@Router			/entry																																																										[get]
 func (c EntriesController) list(ctx *gin.Context) {
-	query := Query{}
+	query := EntryListQuery{}
 	err := ctx.BindQuery(&query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusBadRequest, err)

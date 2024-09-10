@@ -31,7 +31,7 @@ func (c FeedsController) Register(r *gin.RouterGroup) {
 //	@Produce		json
 //	@Param			category	query	int	false	"Category id"
 //	@Success		200			{array}	model.Feed
-//	@Router			/feed																																																																[get]
+//	@Router			/feed																																																																		[get]
 func (c FeedsController) list(ctx *gin.Context) {
 	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
 }
