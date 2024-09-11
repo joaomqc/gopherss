@@ -8,7 +8,51 @@ import (
 
 type EntriesRepository struct{}
 
-func (r *EntriesRepository) GetAll(query model.EntryListQuery) ([]model.Entry, error) {
+func (r *EntriesRepository) UpdateMany(input model.UpdateEntries) error {
+	db, err := GetDb()
+	if err != nil {
+		return err
+	}
+
+	setClauses := []setClause{}
+
+	if input.Read != nil {
+		setClauses = append(setClauses, setClause{
+			field: "is_read",
+			value: *input.Read,
+		})
+	}
+
+	if input.Starred != nil {
+		setClauses = append(setClauses, setClause{
+			field: "is_starred",
+			value: *input.Read,
+		})
+	}
+
+	whereClauses := []whereClause{
+		{
+			field: "id",
+			op:    "in",
+			value: input.Ids,
+		},
+	}
+
+	q, args := buildUpdateQuery(updateQuery{
+		table:        "entries",
+		whereClauses: whereClauses,
+		setClauses:   setClauses,
+	})
+
+	_, err = db.Exec(q, args...)
+	if err != nil {
+		return fmt.Errorf("entries UpdateMany: %w", err)
+	}
+
+	return nil
+}
+
+func (r *EntriesRepository) GetMany(query model.EntryListQuery) ([]model.Entry, error) {
 	db, err := GetDb()
 	if err != nil {
 		return nil, err
@@ -76,21 +120,19 @@ func (r *EntriesRepository) GetAll(query model.EntryListQuery) ([]model.Entry, e
 		})
 	}
 
-	q, args, err := buildSelectQuery(selectQuery{
-		fields:  []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "category", "original_id", "feed_id"},
-		from:    "entries",
-		where:   whereClauses,
-		orderBy: orderBy,
-		sort:    sort,
-		limit:   limit,
-		offset:  query.Offset,
+	q, args := buildSelectQuery(selectQuery{
+		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "category", "original_id", "feed_id"},
+		table:        "entries",
+		whereClauses: whereClauses,
+		orderBy:      orderBy,
+		sort:         sort,
+		limit:        limit,
+		offset:       query.Offset,
 	})
-	if err != nil {
-		return nil, err
-	}
+
 	rows, err := db.Query(q, args...)
 	if err != nil {
-		return nil, fmt.Errorf("entries getAll: %w", err)
+		return nil, fmt.Errorf("entries GetMany: %w", err)
 	}
 	defer rows.Close()
 
@@ -111,12 +153,12 @@ func (r *EntriesRepository) GetAll(query model.EntryListQuery) ([]model.Entry, e
 			&entry.FeedId)
 
 		if err != nil {
-			return nil, fmt.Errorf("entries getAll: %w", err)
+			return nil, fmt.Errorf("entries GetMany: %w", err)
 		}
 		entries = append(entries, entry)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("entries getAll: %w", err)
+		return nil, fmt.Errorf("entries GetMany: %w", err)
 	}
 	return entries, nil
 }

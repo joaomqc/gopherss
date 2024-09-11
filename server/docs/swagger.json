@@ -204,14 +204,30 @@
                     },
                     {
                         "type": "integer",
+                        "description": "Query offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "Max entries to return",
                         "name": "limit",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "description": "Query offset",
-                        "name": "offset",
+                        "type": "string",
+                        "description": "Property to order by",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "ascending",
+                            "descending"
+                        ],
+                        "type": "string",
+                        "description": "Sort ascending/descending",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -524,7 +540,7 @@
         },
         "/feed/refresh": {
             "post": {
-                "description": "refresh all feeds",
+                "description": "refresh many feeds",
                 "tags": [
                     "feed"
                 ],
@@ -765,6 +781,9 @@
                 "isRead": {
                     "type": "boolean"
                 },
+                "isStarred": {
+                    "type": "boolean"
+                },
                 "link": {
                     "$ref": "#/definitions/url.URL"
                 },
@@ -802,17 +821,6 @@
                 }
             }
         },
-        "model.Status": {
-            "type": "string",
-            "enum": [
-                "read",
-                "unread"
-            ],
-            "x-enum-varnames": [
-                "Read",
-                "Unread"
-            ]
-        },
         "model.UpdateCategory": {
             "type": "object",
             "properties": {
@@ -833,8 +841,11 @@
                         "type": "integer"
                     }
                 },
-                "status": {
-                    "$ref": "#/definitions/model.Status"
+                "read": {
+                    "type": "boolean"
+                },
+                "starred": {
+                    "type": "boolean"
                 }
             }
         },

@@ -21,8 +21,9 @@ type Entry struct {
 }
 
 type UpdateEntries struct {
-	Ids    []int
-	Status Status
+	Ids     []int
+	Read    *bool
+	Starred *bool
 }
 
 type UpdateEntry struct {
@@ -46,3 +47,10 @@ type EntryListQuery struct {
 	Read     *bool   `form:"read"`
 	Search   *string `form:"search"`
 }
+
+type EntryStatus string
+
+const (
+	ReadEntryStatus   EntryStatus = "read"
+	UnreadEntryStatus EntryStatus = "unread"
+)

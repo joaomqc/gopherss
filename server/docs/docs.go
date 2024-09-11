@@ -210,14 +210,30 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "Query offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "Max entries to return",
                         "name": "limit",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "description": "Query offset",
-                        "name": "offset",
+                        "type": "string",
+                        "description": "Property to order by",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "ascending",
+                            "descending"
+                        ],
+                        "type": "string",
+                        "description": "Sort ascending/descending",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -530,7 +546,7 @@ const docTemplate = `{
         },
         "/feed/refresh": {
             "post": {
-                "description": "refresh all feeds",
+                "description": "refresh many feeds",
                 "tags": [
                     "feed"
                 ],
@@ -771,6 +787,9 @@ const docTemplate = `{
                 "isRead": {
                     "type": "boolean"
                 },
+                "isStarred": {
+                    "type": "boolean"
+                },
                 "link": {
                     "$ref": "#/definitions/url.URL"
                 },
@@ -808,17 +827,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Status": {
-            "type": "string",
-            "enum": [
-                "read",
-                "unread"
-            ],
-            "x-enum-varnames": [
-                "Read",
-                "Unread"
-            ]
-        },
         "model.UpdateCategory": {
             "type": "object",
             "properties": {
@@ -839,8 +847,11 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
-                "status": {
-                    "$ref": "#/definitions/model.Status"
+                "read": {
+                    "type": "boolean"
+                },
+                "starred": {
+                    "type": "boolean"
                 }
             }
         },

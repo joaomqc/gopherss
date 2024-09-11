@@ -42,7 +42,7 @@ func (c EntriesController) Register(r *gin.RouterGroup) {
 //	@Param			order		query	string			false	"Property to order by"
 //	@Param			sort		query	model.SortType	false	"Sort ascending/descending"
 //	@Success		200			{array}	model.Entry
-//	@Router			/entry																																																																		[get]
+//	@Router			/entry		[get]
 func (c EntriesController) list(ctx *gin.Context) {
 	query := model.EntryListQuery{}
 	err := ctx.BindQuery(&query)
@@ -50,7 +50,7 @@ func (c EntriesController) list(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	entries, err := entriesRepository.GetAll(query)
+	entries, err := entriesRepository.GetMany(query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -70,7 +70,18 @@ func (c EntriesController) list(ctx *gin.Context) {
 //	@Failure		400		{object}	httputil.HTTPError
 //	@Router			/entry	[put]
 func (c EntriesController) updateMany(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
+	body := model.UpdateEntries{}
+	err := ctx.BindJSON(&body)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	}
+	err = entriesRepository.UpdateMany(body)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
 }
 
 // markMany godoc
@@ -78,10 +89,10 @@ func (c EntriesController) updateMany(ctx *gin.Context) {
 //	@Summary		Mark as read/unread
 //	@Description	mark entries as read/unread up to a timestamp
 //	@Tags			entry
-//	@Param			category	query	int				false	"Category id"
-//	@Param			feed		query	int				false	"Feed id"
-//	@Param			before		query	string			true	"Timestamp to mark/unread as read to"	format(date-time)	example("2006-01-02 15:04:05")
-//	@Param			as			query	model.Status	true	"New status"
+//	@Param			category	query	int					false	"Category id"
+//	@Param			feed		query	int					false	"Feed id"
+//	@Param			before		query	string				true	"Timestamp to mark/unread as read to"	format(date-time)	example("2006-01-02 15:04:05")
+//	@Param			as			query	model.EntryStatus	true	"New status"
 //	@Success		204
 //	@Failure		400			{object}	httputil.HTTPError
 //	@Failure		404			{object}	httputil.HTTPError
@@ -137,7 +148,7 @@ func (c EntriesController) delete(ctx *gin.Context) {
 //	@Summary		Mark as read/unread
 //	@Description	mark entry as read/unread
 //	@Tags			entry
-//	@Param			as	query	model.Status	true	"New status"
+//	@Param			as	query	model.EntryStatus	true	"New status"
 //	@Success		204
 //	@Failure		400					{object}	httputil.HTTPError
 //	@Failure		404					{object}	httputil.HTTPError

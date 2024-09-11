@@ -3,16 +3,29 @@ package db
 import (
 	"fmt"
 	"strings"
+
+	"github.com/lib/pq"
 )
 
+type updateQuery struct {
+	setClauses   []setClause
+	table        string
+	whereClauses []whereClause
+}
+
+type setClause struct {
+	field string
+	value any
+}
+
 type selectQuery struct {
-	fields  []string
-	from    string
-	where   []whereClause
-	orderBy string
-	sort    string
-	limit   int
-	offset  *int
+	fields       []string
+	table        string
+	whereClauses []whereClause
+	orderBy      string
+	sort         string
+	limit        int
+	offset       *int
 }
 
 type whereClause struct {
@@ -21,20 +34,19 @@ type whereClause struct {
 	value any
 }
 
-func buildSelectQuery(query selectQuery) (string, []any, error) {
+func buildSelectQuery(query selectQuery) (string, []any) {
 	args := []any{}
-	q := fmt.Sprint("SELECT ", strings.Join(query.fields, ", "), " FROM ", query.from)
+	q := fmt.Sprint("SELECT ", strings.Join(query.fields, ", "), " FROM ", query.table)
 
-	if len(query.where) > 0 {
-		q += " WHERE 1=1 "
-	}
-	for _, where := range query.where {
-		q += fmt.Sprintf(" AND %s %s ?", where.field, where.op)
+	wheres := []string{}
+	for _, where := range query.whereClauses {
+		wheres = append(wheres, fmt.Sprintf(" AND %s %s ?", where.field, where.op))
 		args = append(args, where.value)
 	}
+	q += strings.Join(wheres, " AND ")
 
-	q += " ORDER BY ? ? "
-	args = append(args, query.orderBy, query.sort)
+	q += fmt.Sprint(" ORDER BY ? ", query.sort)
+	args = append(args, query.orderBy)
 
 	q += " LIMIT ? "
 	args = append(args, query.limit)
@@ -44,5 +56,31 @@ func buildSelectQuery(query selectQuery) (string, []any, error) {
 		args = append(args, *query.offset)
 	}
 
-	return q, args, nil
+	return q, args
+}
+
+func buildUpdateQuery(query updateQuery) (string, []any) {
+	args := []any{}
+	q := fmt.Sprint("UPDATE ", query.table, " SET ")
+
+	sets := []string{}
+	for _, set := range query.setClauses {
+		sets = append(sets, fmt.Sprint(set.field, " = ?"))
+		args = append(args, set.value)
+	}
+	q += strings.Join(sets, ", ")
+
+	wheres := []string{}
+	for _, where := range query.whereClauses {
+		if where.op == "in" {
+			wheres = append(wheres, fmt.Sprintf(" AND %s IN (?)", where.field))
+			args = append(args, pq.Array(where.value))
+		} else {
+			wheres = append(wheres, fmt.Sprintf(" AND %s %s ?", where.field, where.op))
+			args = append(args, where.value)
+		}
+	}
+	q += strings.Join(wheres, " AND ")
+
+	return q, args
 }

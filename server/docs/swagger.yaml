@@ -50,6 +50,8 @@ definitions:
         type: integer
       isRead:
         type: boolean
+      isStarred:
+        type: boolean
       link:
         $ref: '#/definitions/url.URL'
       originalId:
@@ -74,14 +76,6 @@ definitions:
       websiteUrl:
         $ref: '#/definitions/url.URL'
     type: object
-  model.Status:
-    enum:
-    - read
-    - unread
-    type: string
-    x-enum-varnames:
-    - Read
-    - Unread
   model.UpdateCategory:
     properties:
       id:
@@ -95,8 +89,10 @@ definitions:
         items:
           type: integer
         type: array
-      status:
-        $ref: '#/definitions/model.Status'
+      read:
+        type: boolean
+      starred:
+        type: boolean
     type: object
   model.UpdateEntry:
     properties:
@@ -313,14 +309,25 @@ paths:
         in: query
         name: search
         type: string
-      - description: Max entries to return
-        in: query
-        name: limit
-        type: integer
       - description: Query offset
         in: query
         name: offset
         type: integer
+      - description: Max entries to return
+        in: query
+        name: limit
+        type: integer
+      - description: Property to order by
+        in: query
+        name: order
+        type: string
+      - description: Sort ascending/descending
+        enum:
+        - ascending
+        - descending
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
@@ -620,7 +627,7 @@ paths:
       - feed
   /feed/refresh:
     post:
-      description: refresh all feeds
+      description: refresh many feeds
       parameters:
       - description: Category id
         in: query
