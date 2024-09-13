@@ -44,13 +44,13 @@ func (c EntriesController) Register(r *gin.RouterGroup) {
 //	@Success		200			{array}	model.Entry
 //	@Router			/entry		[get]
 func (c EntriesController) list(ctx *gin.Context) {
-	query := model.EntryListQuery{}
+	query := model.ListEntriesInput{}
 	err := ctx.BindQuery(&query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	entries, err := entriesRepository.GetMany(query)
+	entries, err := entriesRepository.GetAll(query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -65,12 +65,13 @@ func (c EntriesController) list(ctx *gin.Context) {
 //	@Tags			entry
 //	@Accept			json
 //	@Produce		json
-//	@Param			entries	body	model.UpdateEntries	true	"Update entries"
+//	@Param			entries	body	model.UpdateEntriesInput	true	"Update entries"
 //	@Success		204
 //	@Failure		400		{object}	httputil.HTTPError
 //	@Router			/entry	[put]
 func (c EntriesController) updateMany(ctx *gin.Context) {
-	body := model.UpdateEntries{}
+	// TODO: add muted
+	body := model.UpdateEntriesInput{}
 	err := ctx.BindJSON(&body)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
@@ -91,14 +92,25 @@ func (c EntriesController) updateMany(ctx *gin.Context) {
 //	@Tags			entry
 //	@Param			category	query	int					false	"Category id"
 //	@Param			feed		query	int					false	"Feed id"
-//	@Param			before		query	string				true	"Timestamp to mark/unread as read to"	format(date-time)	example("2006-01-02 15:04:05")
+//	@Param			before		query	string				true	"Timestamp to mark/unread as read to"	format(date-time)	example("2006-01-02T15:04:05Z")
 //	@Param			as			query	model.EntryStatus	true	"New status"
 //	@Success		204
 //	@Failure		400			{object}	httputil.HTTPError
 //	@Failure		404			{object}	httputil.HTTPError
 //	@Router			/entry/mark	[post]
 func (c EntriesController) markMany(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
+	query := model.MarkEntriesInput{}
+	err := ctx.BindQuery(&query)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	}
+	err = entriesRepository.MarkMany(query)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
 }
 
 // get godoc
@@ -121,7 +133,7 @@ func (c EntriesController) get(ctx *gin.Context) {
 //	@Tags			entry
 //	@Accept			json
 //	@Produce		json
-//	@Param			entry		body		model.UpdateEntry	true	"Update entry"
+//	@Param			entry		body		model.UpdateEntryInput	true	"Update entry"
 //	@Success		200			{object}	model.Entry
 //	@Failure		400			{object}	httputil.HTTPError
 //	@Failure		404			{object}	httputil.HTTPError

@@ -268,7 +268,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdateEntries"
+                            "$ref": "#/definitions/model.UpdateEntriesInput"
                         }
                     }
                 ],
@@ -389,7 +389,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdateEntry"
+                            "$ref": "#/definitions/model.UpdateEntryInput"
                         }
                     }
                 ],
@@ -838,7 +838,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UpdateEntries": {
+        "model.UpdateEntriesInput": {
             "type": "object",
             "properties": {
                 "ids": {
@@ -855,40 +855,8 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UpdateEntry": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "type": "string"
-                },
-                "category": {
-                    "type": "string"
-                },
-                "collectedOn": {
-                    "type": "string"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "feedId": {
-                    "type": "integer"
-                },
-                "isRead": {
-                    "type": "boolean"
-                },
-                "link": {
-                    "$ref": "#/definitions/url.URL"
-                },
-                "originalId": {
-                    "type": "string"
-                },
-                "publishedOn": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
+        "model.UpdateEntryInput": {
+            "type": "object"
         },
         "model.UpdateFeed": {
             "type": "object",

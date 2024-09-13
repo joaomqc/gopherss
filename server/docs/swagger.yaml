@@ -83,7 +83,7 @@ definitions:
       title:
         type: string
     type: object
-  model.UpdateEntries:
+  model.UpdateEntriesInput:
     properties:
       ids:
         items:
@@ -94,28 +94,7 @@ definitions:
       starred:
         type: boolean
     type: object
-  model.UpdateEntry:
-    properties:
-      author:
-        type: string
-      category:
-        type: string
-      collectedOn:
-        type: string
-      content:
-        type: string
-      feedId:
-        type: integer
-      isRead:
-        type: boolean
-      link:
-        $ref: '#/definitions/url.URL'
-      originalId:
-        type: string
-      publishedOn:
-        type: string
-      title:
-        type: string
+  model.UpdateEntryInput:
     type: object
   model.UpdateFeed:
     properties:
@@ -350,7 +329,7 @@ paths:
         name: entries
         required: true
         schema:
-          $ref: '#/definitions/model.UpdateEntries'
+          $ref: '#/definitions/model.UpdateEntriesInput'
       produces:
       - application/json
       responses:
@@ -404,7 +383,7 @@ paths:
         name: entry
         required: true
         schema:
-          $ref: '#/definitions/model.UpdateEntry'
+          $ref: '#/definitions/model.UpdateEntryInput'
       produces:
       - application/json
       responses:

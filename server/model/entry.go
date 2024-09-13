@@ -20,32 +20,29 @@ type Entry struct {
 	FeedId      int
 }
 
-type UpdateEntries struct {
+type UpdateEntriesInput struct {
 	Ids     []int
 	Read    *bool
 	Starred *bool
 }
 
-type UpdateEntry struct {
-	Title       *string
-	Content     *string
-	Link        *url.URL
-	Author      *string
-	PublishedOn *time.Time
-	CollectedOn *time.Time
-	IsRead      *bool
-	Category    *string
-	OriginalId  *string
-	FeedId      *int
+type UpdateEntryInput struct {
 }
 
-type EntryListQuery struct {
+type ListEntriesInput struct {
 	BaseQuery
 	Category *int    `form:"category"`
 	Feed     *int    `form:"feed"`
 	Starred  *bool   `form:"starred"`
 	Read     *bool   `form:"read"`
 	Search   *string `form:"search"`
+}
+
+type MarkEntriesInput struct {
+	Category *int        `form:"category"`
+	Feed     *int        `form:"feed"`
+	Before   time.Time   `form:"before"`
+	As       EntryStatus `form:"as"`
 }
 
 type EntryStatus string
