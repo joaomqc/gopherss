@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS Entries (
     collected_on TEXT,
     is_read INTEGER,
     is_starred INTEGER,
+    is_muted INTEGER,
     category TEXT,
     original_id TEXT,
     feed_id INTEGER

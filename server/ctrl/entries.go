@@ -71,7 +71,6 @@ func (c EntriesController) list(ctx *gin.Context) {
 //	@Failure		400		{object}	httputil.HTTPError
 //	@Router			/entry	[put]
 func (c EntriesController) updateMany(ctx *gin.Context) {
-	// TODO: add muted
 	body := model.UpdateEntriesInput{}
 	err := ctx.BindJSON(&body)
 	if err != nil {

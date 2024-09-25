@@ -77,7 +77,7 @@ func (r *EntriesRepository) GetAll(input model.ListEntriesInput) ([]model.Entry,
 	}
 
 	q, args := buildSelectQuery(selectQuery{
-		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "category", "original_id", "feed_id"},
+		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "is_muted", "category", "original_id", "feed_id"},
 		table:        "entries",
 		whereClauses: whereClauses,
 		orderBy:      &orderBy,
@@ -104,6 +104,7 @@ func (r *EntriesRepository) GetAll(input model.ListEntriesInput) ([]model.Entry,
 			&entry.CollectedOn,
 			&entry.IsRead,
 			&entry.IsStarred,
+			&entry.IsMuted,
 			&entry.Category,
 			&entry.OriginalId,
 			&entry.FeedId)
@@ -139,7 +140,14 @@ func (r *EntriesRepository) UpdateMany(input model.UpdateEntriesInput) error {
 	if input.Starred != nil {
 		setClauses = append(setClauses, setClause{
 			field: "is_starred",
-			value: *input.Read,
+			value: *input.Starred,
+		})
+	}
+
+	if input.Muted != nil {
+		setClauses = append(setClauses, setClause{
+			field: "is_muted",
+			value: *input.Muted,
 		})
 	}
 
@@ -243,7 +251,7 @@ func (r *EntriesRepository) Get(id int) (*model.Entry, error) {
 	}}
 
 	q, args := buildSelectQuery(selectQuery{
-		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "category", "original_id", "feed_id"},
+		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "is_muted", "category", "original_id", "feed_id"},
 		table:        "entries",
 		whereClauses: whereClauses,
 	})
@@ -271,6 +279,7 @@ func (r *EntriesRepository) Get(id int) (*model.Entry, error) {
 		&entry.PublishedOn,
 		&entry.CollectedOn,
 		&entry.IsRead,
+		&entry.IsMuted,
 		&entry.IsStarred,
 		&entry.Category,
 		&entry.OriginalId,

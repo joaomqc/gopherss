@@ -15,6 +15,7 @@ type Entry struct {
 	CollectedOn time.Time
 	IsRead      bool
 	IsStarred   bool
+	IsMuted     bool
 	Category    string
 	OriginalId  string
 	FeedId      int
@@ -24,6 +25,7 @@ type UpdateEntriesInput struct {
 	Ids     []int
 	Read    *bool
 	Starred *bool
+	Muted   *bool
 }
 
 type UpdateEntryInput struct {
