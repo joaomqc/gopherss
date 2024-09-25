@@ -6,6 +6,7 @@ import (
 	"gopherss/httputil"
 	"gopherss/model"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -119,11 +120,31 @@ func (c EntriesController) markMany(ctx *gin.Context) {
 //	@Description	get entry
 //	@Tags			entry
 //	@Produce		json
+//	@Param        	id   		path      	int	true	"Entry ID"
 //	@Success		200			{object}	model.Entry
 //	@Failure		404			{object}	httputil.HTTPError
 //	@Router			/entry/{id}	[get]
 func (c EntriesController) get(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
+	idStr := ctx.Param("id")
+	if idStr == "" {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is mandatory"))
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
+		return
+	}
+	entry, err := entriesRepository.Get(id)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	if entry == nil {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("not found"))
+		return
+	}
+	ctx.JSON(http.StatusOK, entry)
 }
 
 // update godoc
@@ -133,6 +154,7 @@ func (c EntriesController) get(ctx *gin.Context) {
 //	@Tags			entry
 //	@Accept			json
 //	@Produce		json
+//	@Param        	id   		path      	int						true	"Entry ID"
 //	@Param			entry		body		model.UpdateEntryInput	true	"Update entry"
 //	@Success		200			{object}	model.Entry
 //	@Failure		400			{object}	httputil.HTTPError
@@ -148,6 +170,7 @@ func (c EntriesController) update(ctx *gin.Context) {
 //	@Description	delete entry
 //	@Tags			entry
 //	@Produce		json
+//	@Param        	id   		path      	int	true	"Entry ID"
 //	@Success		204
 //	@Failure		404			{object}	httputil.HTTPError
 //	@Router			/entry/{id}	[delete]
@@ -160,7 +183,8 @@ func (c EntriesController) delete(ctx *gin.Context) {
 //	@Summary		Mark as read/unread
 //	@Description	mark entry as read/unread
 //	@Tags			entry
-//	@Param			as	query	model.EntryStatus	true	"New status"
+//	@Param        	id  				path    int					true	"Entry ID"
+//	@Param			as					query	model.EntryStatus	true	"New status"
 //	@Success		204
 //	@Failure		400					{object}	httputil.HTTPError
 //	@Failure		404					{object}	httputil.HTTPError

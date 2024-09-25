@@ -86,6 +86,15 @@ const docTemplate = `{
                     "category"
                 ],
                 "summary": "Get category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -114,6 +123,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update category",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Update category",
                         "name": "category",
@@ -154,6 +170,15 @@ const docTemplate = `{
                     "category"
                 ],
                 "summary": "Delete category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -308,7 +333,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "date-time",
-                        "example": "\"2006-01-02 15:04:05\"",
+                        "example": "\"2006-01-02T15:04:05Z\"",
                         "description": "Timestamp to mark/unread as read to",
                         "name": "before",
                         "in": "query",
@@ -355,6 +380,15 @@ const docTemplate = `{
                     "entry"
                 ],
                 "summary": "Get entry",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -383,6 +417,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update entry",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Update entry",
                         "name": "entry",
@@ -423,6 +464,15 @@ const docTemplate = `{
                     "entry"
                 ],
                 "summary": "Delete entry",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -444,6 +494,13 @@ const docTemplate = `{
                 ],
                 "summary": "Mark as read/unread",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "enum": [
                             "read",
@@ -582,6 +639,15 @@ const docTemplate = `{
                     "feed"
                 ],
                 "summary": "Get feed",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -610,6 +676,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update feed",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Update feed",
                         "name": "feed",
@@ -650,6 +723,15 @@ const docTemplate = `{
                     "feed"
                 ],
                 "summary": "Delete feed",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -673,6 +755,15 @@ const docTemplate = `{
                     "feed"
                 ],
                 "summary": "Get feed icon",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -696,6 +787,15 @@ const docTemplate = `{
                     "feed"
                 ],
                 "summary": "Refresh feed",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -952,7 +1052,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Gopherss API",

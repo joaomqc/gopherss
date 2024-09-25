@@ -22,9 +22,9 @@ type selectQuery struct {
 	fields       []string
 	table        string
 	whereClauses []whereClause
-	orderBy      string
-	sort         string
-	limit        int
+	orderBy      *string
+	sort         *string
+	limit        *int
 	offset       *int
 }
 
@@ -38,18 +38,25 @@ func buildSelectQuery(query selectQuery) (string, []any) {
 	args := []any{}
 	q := fmt.Sprint("SELECT ", strings.Join(query.fields, ", "), " FROM ", query.table)
 
-	wheres := []string{}
-	for _, where := range query.whereClauses {
-		wheres = append(wheres, fmt.Sprintf(" AND %s %s ?", where.field, where.op))
-		args = append(args, where.value)
+	if len(query.whereClauses) > 0 {
+		q += " WHERE "
+		wheres := []string{}
+		for _, where := range query.whereClauses {
+			wheres = append(wheres, fmt.Sprintf("%s %s ?", where.field, where.op))
+			args = append(args, where.value)
+		}
+		q += strings.Join(wheres, " AND ")
 	}
-	q += strings.Join(wheres, " AND ")
 
-	q += fmt.Sprint(" ORDER BY ? ", query.sort)
-	args = append(args, query.orderBy)
+	if query.sort != nil {
+		q += fmt.Sprint(" ORDER BY ? ", query.sort)
+		args = append(args, query.orderBy)
+	}
 
-	q += " LIMIT ? "
-	args = append(args, query.limit)
+	if query.limit != nil {
+		q += " LIMIT ? "
+		args = append(args, query.limit)
+	}
 
 	if query.offset != nil {
 		q += " OFFSET ? "

@@ -70,6 +70,7 @@ func (c FeedsController) refreshMany(ctx *gin.Context) {
 //	@Description	get feed
 //	@Tags			feed
 //	@Produce		json
+//	@Param        	id   		path      	int	true	"Feed ID"
 //	@Success		200			{object}	model.Feed
 //	@Failure		404			{object}	httputil.HTTPError
 //	@Router			/feed/{id}	[get]
@@ -84,6 +85,7 @@ func (c FeedsController) get(ctx *gin.Context) {
 //	@Tags			feed
 //	@Accept			json
 //	@Produce		json
+//	@Param        	id   		path      	int					true	"Feed ID"
 //	@Param			feed		body		model.UpdateFeed	true	"Update feed"
 //	@Success		200			{object}	model.Feed
 //	@Failure		400			{object}	httputil.HTTPError
@@ -99,6 +101,7 @@ func (c FeedsController) update(ctx *gin.Context) {
 //	@Description	delete feed
 //	@Tags			feed
 //	@Produce		json
+//	@Param        	id   		path      	int	true	"Feed ID"
 //	@Success		204
 //	@Failure		404			{object}	httputil.HTTPError
 //	@Router			/feed/{id}	[delete]
@@ -112,6 +115,7 @@ func (c FeedsController) delete(ctx *gin.Context) {
 //	@Description	get feed icon
 //	@Tags			feed
 //	@Produce		json
+//	@Param        	id   			path      	int	true	"Feed ID"
 //	@Success		200				{object}	model.Feed
 //	@Failure		404				{object}	httputil.HTTPError
 //	@Router			/feed/{id}/icon	[get]
@@ -124,6 +128,7 @@ func (c FeedsController) getIcon(ctx *gin.Context) {
 //	@Summary		Refresh feed
 //	@Description	refresh feed
 //	@Tags			feed
+//	@Param        	id   				path      	int	true	"Feed ID"
 //	@Success		204
 //	@Failure		404					{object}	httputil.HTTPError
 //	@Router			/feed/{id}/refresh	[post]

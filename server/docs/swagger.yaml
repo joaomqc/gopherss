@@ -157,7 +157,6 @@ definitions:
     type: object
   url.Userinfo:
     type: object
-host: localhost:8080
 info:
   contact: {}
   description: RSS feed management app
@@ -207,6 +206,12 @@ paths:
   /category/{id}:
     delete:
       description: delete category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -221,6 +226,12 @@ paths:
       - category
     get:
       description: get category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -240,6 +251,11 @@ paths:
       - application/json
       description: update category
       parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: Update category
         in: body
         name: category
@@ -345,6 +361,12 @@ paths:
   /entry/{id}:
     delete:
       description: delete entry
+      parameters:
+      - description: Entry ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -359,6 +381,12 @@ paths:
       - entry
     get:
       description: get entry
+      parameters:
+      - description: Entry ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -378,6 +406,11 @@ paths:
       - application/json
       description: update entry
       parameters:
+      - description: Entry ID
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: Update entry
         in: body
         name: entry
@@ -406,6 +439,11 @@ paths:
     post:
       description: mark entry as read/unread
       parameters:
+      - description: Entry ID
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: New status
         enum:
         - read
@@ -441,7 +479,7 @@ paths:
         name: feed
         type: integer
       - description: Timestamp to mark/unread as read to
-        example: '"2006-01-02 15:04:05"'
+        example: '"2006-01-02T15:04:05Z"'
         format: date-time
         in: query
         name: before
@@ -517,6 +555,12 @@ paths:
   /feed/{id}:
     delete:
       description: delete feed
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -531,6 +575,12 @@ paths:
       - feed
     get:
       description: get feed
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -550,6 +600,11 @@ paths:
       - application/json
       description: update feed
       parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: Update feed
         in: body
         name: feed
@@ -577,6 +632,12 @@ paths:
   /feed/{id}/icon:
     get:
       description: get feed icon
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -594,6 +655,12 @@ paths:
   /feed/{id}/refresh:
     post:
       description: refresh feed
+      parameters:
+      - description: Feed ID
+        in: path
+        name: id
+        required: true
+        type: integer
       responses:
         "204":
           description: No Content

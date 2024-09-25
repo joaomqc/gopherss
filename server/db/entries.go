@@ -80,9 +80,9 @@ func (r *EntriesRepository) GetAll(input model.ListEntriesInput) ([]model.Entry,
 		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "category", "original_id", "feed_id"},
 		table:        "entries",
 		whereClauses: whereClauses,
-		orderBy:      orderBy,
-		sort:         sort,
-		limit:        limit,
+		orderBy:      &orderBy,
+		sort:         &sort,
+		limit:        &limit,
 		offset:       input.Offset,
 	})
 
@@ -113,9 +113,11 @@ func (r *EntriesRepository) GetAll(input model.ListEntriesInput) ([]model.Entry,
 		}
 		entries = append(entries, entry)
 	}
+
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("entries GetMany: %w", err)
 	}
+
 	return entries, nil
 }
 
@@ -226,4 +228,57 @@ func (r *EntriesRepository) MarkMany(input model.MarkEntriesInput) error {
 	}
 
 	return nil
+}
+
+func (r *EntriesRepository) Get(id int) (*model.Entry, error) {
+	db, err := GetDb()
+	if err != nil {
+		return nil, err
+	}
+
+	whereClauses := []whereClause{{
+		field: "id",
+		op:    "=",
+		value: id,
+	}}
+
+	q, args := buildSelectQuery(selectQuery{
+		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "category", "original_id", "feed_id"},
+		table:        "entries",
+		whereClauses: whereClauses,
+	})
+
+	rows, err := db.Query(q, args...)
+	if err != nil {
+		return nil, fmt.Errorf("entries Get: %w", err)
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		if err := rows.Err(); err != nil {
+			return nil, fmt.Errorf("entries Get: %w", err)
+		}
+		return nil, nil
+	}
+
+	var entry model.Entry
+	err = rows.Scan(
+		&entry.Id,
+		&entry.Title,
+		&entry.Content,
+		&entry.Link,
+		&entry.Author,
+		&entry.PublishedOn,
+		&entry.CollectedOn,
+		&entry.IsRead,
+		&entry.IsStarred,
+		&entry.Category,
+		&entry.OriginalId,
+		&entry.FeedId)
+
+	if err != nil {
+		return nil, fmt.Errorf("entries Get: %w", err)
+	}
+
+	return &entry, nil
 }

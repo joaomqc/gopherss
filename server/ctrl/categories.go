@@ -53,6 +53,7 @@ func (c CategoriesController) create(ctx *gin.Context) {
 //	@Description	get category
 //	@Tags			category
 //	@Produce		json
+//	@Param        	id   			path      	int	true	"Category ID"
 //	@Success		200				{object}	model.Category
 //	@Failure		404				{object}	httputil.HTTPError
 //	@Router			/category/{id}	[get]
@@ -67,6 +68,7 @@ func (c CategoriesController) get(ctx *gin.Context) {
 //	@Tags			category
 //	@Accept			json
 //	@Produce		json
+//	@Param        	id   			path      	int						true	"Category ID"
 //	@Param			category		body		model.UpdateCategory	true	"Update category"
 //	@Success		200				{object}	model.Category
 //	@Failure		400				{object}	httputil.HTTPError
@@ -82,6 +84,7 @@ func (c CategoriesController) update(ctx *gin.Context) {
 //	@Description	delete category
 //	@Tags			category
 //	@Produce		json
+//	@Param        	id   			path      	int	true	"Category ID"
 //	@Success		204
 //	@Failure		404				{object}	httputil.HTTPError
 //	@Router			/category/{id}	[delete]

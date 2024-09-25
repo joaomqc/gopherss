@@ -6,7 +6,6 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
     "basePath": "/api",
     "paths": {
         "/category": {
@@ -80,6 +79,15 @@
                     "category"
                 ],
                 "summary": "Get category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -108,6 +116,13 @@
                 ],
                 "summary": "Update category",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Update category",
                         "name": "category",
@@ -148,6 +163,15 @@
                     "category"
                 ],
                 "summary": "Delete category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -302,7 +326,7 @@
                     {
                         "type": "string",
                         "format": "date-time",
-                        "example": "\"2006-01-02 15:04:05\"",
+                        "example": "\"2006-01-02T15:04:05Z\"",
                         "description": "Timestamp to mark/unread as read to",
                         "name": "before",
                         "in": "query",
@@ -349,6 +373,15 @@
                     "entry"
                 ],
                 "summary": "Get entry",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -377,6 +410,13 @@
                 ],
                 "summary": "Update entry",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Update entry",
                         "name": "entry",
@@ -417,6 +457,15 @@
                     "entry"
                 ],
                 "summary": "Delete entry",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -438,6 +487,13 @@
                 ],
                 "summary": "Mark as read/unread",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Entry ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "enum": [
                             "read",
@@ -576,6 +632,15 @@
                     "feed"
                 ],
                 "summary": "Get feed",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -604,6 +669,13 @@
                 ],
                 "summary": "Update feed",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Update feed",
                         "name": "feed",
@@ -644,6 +716,15 @@
                     "feed"
                 ],
                 "summary": "Delete feed",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -667,6 +748,15 @@
                     "feed"
                 ],
                 "summary": "Get feed icon",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -690,6 +780,15 @@
                     "feed"
                 ],
                 "summary": "Refresh feed",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Feed ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
