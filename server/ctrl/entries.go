@@ -160,7 +160,28 @@ func (c EntriesController) get(ctx *gin.Context) {
 //	@Failure		404			{object}	httputil.HTTPError
 //	@Router			/entry/{id}	[put]
 func (c EntriesController) update(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
+	idStr := ctx.Param("id")
+	if idStr == "" {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is mandatory"))
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
+		return
+	}
+	body := model.UpdateEntryInput{}
+	err = ctx.BindJSON(&body)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	}
+	err = entriesRepository.Update(id, body)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
 }
 
 // delete godoc

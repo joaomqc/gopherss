@@ -815,12 +815,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer",
-                    "example": 400
+                    "type": "integer"
                 },
                 "message": {
-                    "type": "string",
-                    "example": "status bad request"
+                    "type": "string"
                 }
             }
         },
@@ -869,9 +867,6 @@ const docTemplate = `{
                 "author": {
                     "type": "string"
                 },
-                "category": {
-                    "type": "string"
-                },
                 "collectedOn": {
                     "type": "string"
                 },
@@ -883,6 +878,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "isMuted": {
+                    "type": "boolean"
                 },
                 "isRead": {
                     "type": "boolean"
@@ -947,6 +945,9 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
+                "muted": {
+                    "type": "boolean"
+                },
                 "read": {
                     "type": "boolean"
                 },
@@ -956,7 +957,18 @@ const docTemplate = `{
             }
         },
         "model.UpdateEntryInput": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "muted": {
+                    "type": "boolean"
+                },
+                "read": {
+                    "type": "boolean"
+                },
+                "starred": {
+                    "type": "boolean"
+                }
+            }
         },
         "model.UpdateFeed": {
             "type": "object",

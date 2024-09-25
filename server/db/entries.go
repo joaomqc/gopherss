@@ -38,7 +38,7 @@ func (r *EntriesRepository) GetAll(input model.ListEntriesInput) ([]model.Entry,
 
 	if input.Category != nil {
 		whereClauses = append(whereClauses, whereClause{
-			field: "category",
+			field: "category_id",
 			op:    "=",
 			value: *input.Category,
 		})
@@ -77,13 +77,17 @@ func (r *EntriesRepository) GetAll(input model.ListEntriesInput) ([]model.Entry,
 	}
 
 	q, args := buildSelectQuery(selectQuery{
-		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "is_muted", "category", "original_id", "feed_id"},
+		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "is_muted", "original_id", "feed_id"},
 		table:        "entries",
 		whereClauses: whereClauses,
-		orderBy:      &orderBy,
-		sort:         &sort,
-		limit:        &limit,
-		offset:       input.Offset,
+		joinClauses: []joinClause{{
+			table: "feeds",
+			on:    "entries.feed_id = feeds.id",
+		}},
+		orderBy: &orderBy,
+		sort:    &sort,
+		limit:   &limit,
+		offset:  input.Offset,
 	})
 
 	rows, err := db.Query(q, args...)
@@ -105,7 +109,6 @@ func (r *EntriesRepository) GetAll(input model.ListEntriesInput) ([]model.Entry,
 			&entry.IsRead,
 			&entry.IsStarred,
 			&entry.IsMuted,
-			&entry.Category,
 			&entry.OriginalId,
 			&entry.FeedId)
 
@@ -168,6 +171,57 @@ func (r *EntriesRepository) UpdateMany(input model.UpdateEntriesInput) error {
 	_, err = db.Exec(q, args...)
 	if err != nil {
 		return fmt.Errorf("entries UpdateMany: %w", err)
+	}
+
+	return nil
+}
+
+func (r *EntriesRepository) Update(id int, input model.UpdateEntryInput) error {
+	db, err := GetDb()
+	if err != nil {
+		return err
+	}
+
+	setClauses := []setClause{}
+
+	if input.Read != nil {
+		setClauses = append(setClauses, setClause{
+			field: "is_read",
+			value: *input.Read,
+		})
+	}
+
+	if input.Starred != nil {
+		setClauses = append(setClauses, setClause{
+			field: "is_starred",
+			value: *input.Starred,
+		})
+	}
+
+	if input.Muted != nil {
+		setClauses = append(setClauses, setClause{
+			field: "is_muted",
+			value: *input.Muted,
+		})
+	}
+
+	whereClauses := []whereClause{
+		{
+			field: "id",
+			op:    "=",
+			value: id,
+		},
+	}
+
+	q, args := buildUpdateQuery(updateQuery{
+		table:        "entries",
+		whereClauses: whereClauses,
+		setClauses:   setClauses,
+	})
+
+	_, err = db.Exec(q, args...)
+	if err != nil {
+		return fmt.Errorf("entries Update: %w", err)
 	}
 
 	return nil
@@ -251,7 +305,7 @@ func (r *EntriesRepository) Get(id int) (*model.Entry, error) {
 	}}
 
 	q, args := buildSelectQuery(selectQuery{
-		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "is_muted", "category", "original_id", "feed_id"},
+		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "is_muted", "original_id", "feed_id"},
 		table:        "entries",
 		whereClauses: whereClauses,
 	})
@@ -281,7 +335,6 @@ func (r *EntriesRepository) Get(id int) (*model.Entry, error) {
 		&entry.IsRead,
 		&entry.IsMuted,
 		&entry.IsStarred,
-		&entry.Category,
 		&entry.OriginalId,
 		&entry.FeedId)
 

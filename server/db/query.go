@@ -22,6 +22,7 @@ type selectQuery struct {
 	fields       []string
 	table        string
 	whereClauses []whereClause
+	joinClauses  []joinClause
 	orderBy      *string
 	sort         *string
 	limit        *int
@@ -32,6 +33,11 @@ type whereClause struct {
 	field string
 	op    string
 	value any
+}
+
+type joinClause struct {
+	table string
+	on    string
 }
 
 func buildSelectQuery(query selectQuery) (string, []any) {

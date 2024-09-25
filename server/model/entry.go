@@ -16,7 +16,6 @@ type Entry struct {
 	IsRead      bool
 	IsStarred   bool
 	IsMuted     bool
-	Category    string
 	OriginalId  string
 	FeedId      int
 }
@@ -29,6 +28,9 @@ type UpdateEntriesInput struct {
 }
 
 type UpdateEntryInput struct {
+	Read    *bool
+	Starred *bool
+	Muted   *bool
 }
 
 type ListEntriesInput struct {

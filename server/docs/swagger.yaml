@@ -3,10 +3,8 @@ definitions:
   httputil.HTTPError:
     properties:
       code:
-        example: 400
         type: integer
       message:
-        example: status bad request
         type: string
     type: object
   model.AddCategory:
@@ -38,8 +36,6 @@ definitions:
     properties:
       author:
         type: string
-      category:
-        type: string
       collectedOn:
         type: string
       content:
@@ -48,6 +44,8 @@ definitions:
         type: integer
       id:
         type: integer
+      isMuted:
+        type: boolean
       isRead:
         type: boolean
       isStarred:
@@ -89,12 +87,21 @@ definitions:
         items:
           type: integer
         type: array
+      muted:
+        type: boolean
       read:
         type: boolean
       starred:
         type: boolean
     type: object
   model.UpdateEntryInput:
+    properties:
+      muted:
+        type: boolean
+      read:
+        type: boolean
+      starred:
+        type: boolean
     type: object
   model.UpdateFeed:
     properties:
