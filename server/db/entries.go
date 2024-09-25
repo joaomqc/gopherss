@@ -286,7 +286,52 @@ func (r *EntriesRepository) MarkMany(input model.MarkEntriesInput) error {
 
 	_, err = db.Exec(q, args...)
 	if err != nil {
-		return fmt.Errorf("entries UpdateMany: %w", err)
+		return fmt.Errorf("entries MarkMany: %w", err)
+	}
+
+	return nil
+}
+
+func (r *EntriesRepository) Mark(id int, input model.MarkEntryInput) error {
+	db, err := GetDb()
+	if err != nil {
+		return err
+	}
+
+	var isRead bool
+	switch input.As {
+	case model.ReadEntryStatus:
+		isRead = true
+	case model.UnreadEntryStatus:
+		isRead = false
+	default:
+		return errors.New("unknown status")
+	}
+
+	setClauses := []setClause{
+		{
+			field: "is_read",
+			value: isRead,
+		},
+	}
+
+	whereClauses := []whereClause{
+		{
+			field: "id",
+			op:    "=",
+			value: id,
+		},
+	}
+
+	q, args := buildUpdateQuery(updateQuery{
+		table:        "entries",
+		whereClauses: whereClauses,
+		setClauses:   setClauses,
+	})
+
+	_, err = db.Exec(q, args...)
+	if err != nil {
+		return fmt.Errorf("entries Update: %w", err)
 	}
 
 	return nil

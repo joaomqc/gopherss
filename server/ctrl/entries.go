@@ -23,7 +23,6 @@ func (c EntriesController) Register(r *gin.RouterGroup) {
 	group.POST("/mark", c.markMany)
 	group.GET("/:id", c.get)
 	group.PUT("/:id", c.update)
-	group.DELETE("/:id", c.delete)
 	group.POST("/:id/mark", c.mark)
 }
 
@@ -184,20 +183,6 @@ func (c EntriesController) update(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-// delete godoc
-//
-//	@Summary		Delete entry
-//	@Description	delete entry
-//	@Tags			entry
-//	@Produce		json
-//	@Param        	id   		path      	int	true	"Entry ID"
-//	@Success		204
-//	@Failure		404			{object}	httputil.HTTPError
-//	@Router			/entry/{id}	[delete]
-func (c EntriesController) delete(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
-}
-
 // mark godoc
 //
 //	@Summary		Mark as read/unread
@@ -210,5 +195,26 @@ func (c EntriesController) delete(ctx *gin.Context) {
 //	@Failure		404					{object}	httputil.HTTPError
 //	@Router			/entry/{id}/mark	[post]
 func (c EntriesController) mark(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
+	idStr := ctx.Param("id")
+	if idStr == "" {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is mandatory"))
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
+		return
+	}
+	query := model.MarkEntryInput{}
+	err = ctx.BindQuery(&query)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	}
+	err = entriesRepository.Mark(id, query)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
 }

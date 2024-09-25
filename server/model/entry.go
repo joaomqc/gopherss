@@ -49,6 +49,10 @@ type MarkEntriesInput struct {
 	As       EntryStatus `form:"as"`
 }
 
+type MarkEntryInput struct {
+	As EntryStatus `form:"as"`
+}
+
 type EntryStatus string
 
 const (

@@ -366,26 +366,6 @@ paths:
       tags:
       - entry
   /entry/{id}:
-    delete:
-      description: delete entry
-      parameters:
-      - description: Entry ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-      summary: Delete entry
-      tags:
-      - entry
     get:
       description: get entry
       parameters:

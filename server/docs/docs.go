@@ -454,36 +454,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "delete entry",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "entry"
-                ],
-                "summary": "Delete entry",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Entry ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    }
-                }
             }
         },
         "/entry/{id}/mark": {
