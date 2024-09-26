@@ -175,9 +175,13 @@ func (c EntriesController) update(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	err = entriesRepository.Update(id, body)
+	updated, err := entriesRepository.Update(id, body)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	if !updated {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("not found"))
 		return
 	}
 	ctx.Status(http.StatusNoContent)
@@ -211,9 +215,13 @@ func (c EntriesController) mark(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	err = entriesRepository.Mark(id, query)
+	updated, err := entriesRepository.Mark(id, query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	if !updated {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("not found"))
 		return
 	}
 	ctx.Status(http.StatusNoContent)

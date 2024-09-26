@@ -176,10 +176,10 @@ func (r *EntriesRepository) UpdateMany(input model.UpdateEntriesInput) error {
 	return nil
 }
 
-func (r *EntriesRepository) Update(id int, input model.UpdateEntryInput) error {
+func (r *EntriesRepository) Update(id int, input model.UpdateEntryInput) (bool, error) {
 	db, err := GetDb()
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	setClauses := []setClause{}
@@ -219,12 +219,17 @@ func (r *EntriesRepository) Update(id int, input model.UpdateEntryInput) error {
 		setClauses:   setClauses,
 	})
 
-	_, err = db.Exec(q, args...)
+	res, err := db.Exec(q, args...)
 	if err != nil {
-		return fmt.Errorf("entries Update: %w", err)
+		return false, fmt.Errorf("entries Update: %w", err)
 	}
 
-	return nil
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("entries Update: %w", err)
+	}
+
+	return rows > 0, nil
 }
 
 func (r *EntriesRepository) MarkMany(input model.MarkEntriesInput) error {
@@ -292,10 +297,10 @@ func (r *EntriesRepository) MarkMany(input model.MarkEntriesInput) error {
 	return nil
 }
 
-func (r *EntriesRepository) Mark(id int, input model.MarkEntryInput) error {
+func (r *EntriesRepository) Mark(id int, input model.MarkEntryInput) (bool, error) {
 	db, err := GetDb()
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	var isRead bool
@@ -305,7 +310,7 @@ func (r *EntriesRepository) Mark(id int, input model.MarkEntryInput) error {
 	case model.UnreadEntryStatus:
 		isRead = false
 	default:
-		return errors.New("unknown status")
+		return false, errors.New("unknown status")
 	}
 
 	setClauses := []setClause{
@@ -329,12 +334,17 @@ func (r *EntriesRepository) Mark(id int, input model.MarkEntryInput) error {
 		setClauses:   setClauses,
 	})
 
-	_, err = db.Exec(q, args...)
+	res, err := db.Exec(q, args...)
 	if err != nil {
-		return fmt.Errorf("entries Update: %w", err)
+		return false, fmt.Errorf("entries Mark: %w", err)
 	}
 
-	return nil
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("entries Mark: %w", err)
+	}
+
+	return rows > 0, nil
 }
 
 func (r *EntriesRepository) Get(id int) (*model.Entry, error) {
