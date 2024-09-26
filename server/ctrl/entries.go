@@ -50,7 +50,7 @@ func (c EntriesController) list(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	entries, err := entriesRepository.GetAll(query)
+	entries, err := entriesRepository.GetMany(query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return

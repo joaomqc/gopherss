@@ -6,40 +6,39 @@ import (
 )
 
 type Entry struct {
-	Id          int
-	Title       string
-	Content     string
-	Link        url.URL
-	Author      string
-	PublishedOn time.Time
-	CollectedOn time.Time
-	IsRead      bool
-	IsStarred   bool
-	IsMuted     bool
-	OriginalId  string
-	FeedId      int
+	Id          int       `json:"id"`
+	Title       string    `json:"title"`
+	Content     string    `json:"content"`
+	Link        url.URL   `json:"link"`
+	Author      string    `json:"author"`
+	PublishedOn time.Time `json:"publishedOn"`
+	CollectedOn time.Time `json:"collectedOn"`
+	IsRead      bool      `json:"isRead"`
+	IsStarred   bool      `json:"isStarred"`
+	IsMuted     bool      `json:"isMuted"`
+	OriginalId  string    `json:"originalId"`
+	FeedId      int       `json:"feedId"`
 }
 
 type UpdateEntriesInput struct {
-	Ids     []int
-	Read    *bool
-	Starred *bool
-	Muted   *bool
+	Ids       []int `json:"ids"`
+	IsRead    *bool `json:"isRead,omitempty"`
+	IsStarred *bool `json:"isStarred,omitempty"`
+	IsMuted   *bool `json:"isMuted,omitempty"`
 }
 
 type UpdateEntryInput struct {
-	Read    *bool
-	Starred *bool
-	Muted   *bool
+	IsRead    *bool `json:"isRead,omitempty"`
+	IsStarred *bool `json:"isStarred,omitempty"`
+	IsMuted   *bool `json:"isMuted,omitempty"`
 }
 
 type ListEntriesInput struct {
 	BaseQuery
-	Category *int    `form:"category"`
-	Feed     *int    `form:"feed"`
-	Starred  *bool   `form:"starred"`
-	Read     *bool   `form:"read"`
-	Search   *string `form:"search"`
+	Category *int  `form:"category"`
+	Feed     *int  `form:"feed"`
+	Starred  *bool `form:"starred"`
+	Read     *bool `form:"read"`
 }
 
 type MarkEntriesInput struct {

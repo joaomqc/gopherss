@@ -25,6 +25,42 @@ const docTemplate = `{
                     "category"
                 ],
                 "summary": "List categories",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search text",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Query offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Max categories to return",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Property to order by",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "ascending",
+                            "descending"
+                        ],
+                        "type": "string",
+                        "description": "Sort ascending/descending",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -56,7 +92,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AddCategory"
+                            "$ref": "#/definitions/model.AddCategoryInput"
                         }
                     }
                 ],
@@ -136,7 +172,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdateCategory"
+                            "$ref": "#/definitions/model.UpdateCategoryInput"
                         }
                     }
                 ],
@@ -792,7 +828,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.AddCategory": {
+        "model.AddCategoryInput": {
             "type": "object",
             "properties": {
                 "title": {
@@ -895,12 +931,9 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UpdateCategory": {
+        "model.UpdateCategoryInput": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer"
-                },
                 "title": {
                     "type": "string"
                 }

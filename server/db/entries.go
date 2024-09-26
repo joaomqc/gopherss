@@ -8,7 +8,7 @@ import (
 
 type EntriesRepository struct{}
 
-func (r *EntriesRepository) GetAll(input model.ListEntriesInput) ([]model.Entry, error) {
+func (r *EntriesRepository) GetMany(input model.ListEntriesInput) ([]model.Entry, error) {
 	db, err := GetDb()
 	if err != nil {
 		return nil, err
@@ -22,7 +22,12 @@ func (r *EntriesRepository) GetAll(input model.ListEntriesInput) ([]model.Entry,
 
 	sort := "DESC"
 	if input.Sort != nil {
-		sort = string(*input.Sort)
+		switch *input.Sort {
+		case model.AscendingSort:
+			sort = "ASC"
+		case model.DescendingSort:
+			sort = "DESC"
+		}
 	}
 
 	limit := 100
@@ -133,24 +138,24 @@ func (r *EntriesRepository) UpdateMany(input model.UpdateEntriesInput) error {
 
 	setClauses := []setClause{}
 
-	if input.Read != nil {
+	if input.IsRead != nil {
 		setClauses = append(setClauses, setClause{
 			field: "is_read",
-			value: *input.Read,
+			value: *input.IsRead,
 		})
 	}
 
-	if input.Starred != nil {
+	if input.IsStarred != nil {
 		setClauses = append(setClauses, setClause{
 			field: "is_starred",
-			value: *input.Starred,
+			value: *input.IsStarred,
 		})
 	}
 
-	if input.Muted != nil {
+	if input.IsMuted != nil {
 		setClauses = append(setClauses, setClause{
 			field: "is_muted",
-			value: *input.Muted,
+			value: *input.IsMuted,
 		})
 	}
 
@@ -184,24 +189,24 @@ func (r *EntriesRepository) Update(id int, input model.UpdateEntryInput) (bool, 
 
 	setClauses := []setClause{}
 
-	if input.Read != nil {
+	if input.IsRead != nil {
 		setClauses = append(setClauses, setClause{
 			field: "is_read",
-			value: *input.Read,
+			value: *input.IsRead,
 		})
 	}
 
-	if input.Starred != nil {
+	if input.IsStarred != nil {
 		setClauses = append(setClauses, setClause{
 			field: "is_starred",
-			value: *input.Starred,
+			value: *input.IsStarred,
 		})
 	}
 
-	if input.Muted != nil {
+	if input.IsMuted != nil {
 		setClauses = append(setClauses, setClause{
 			field: "is_muted",
-			value: *input.Muted,
+			value: *input.IsMuted,
 		})
 	}
 

@@ -55,13 +55,13 @@ func buildSelectQuery(query selectQuery) (string, []any) {
 	}
 
 	if query.sort != nil {
-		q += fmt.Sprint(" ORDER BY ? ", query.sort)
-		args = append(args, query.orderBy)
+		q += fmt.Sprint(" ORDER BY ? ", *query.sort)
+		args = append(args, *query.orderBy)
 	}
 
 	if query.limit != nil {
 		q += " LIMIT ? "
-		args = append(args, query.limit)
+		args = append(args, *query.limit)
 	}
 
 	if query.offset != nil {

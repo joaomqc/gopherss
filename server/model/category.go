@@ -1,15 +1,14 @@
 package model
 
 type Category struct {
-	Id    int
-	Title string
+	Id    int    `json:"id"`
+	Title string `json:"title"`
 }
 
-type AddCategory struct {
-	Title string
+type AddCategoryInput struct {
+	Title string `json:"title"`
 }
 
-type UpdateCategory struct {
-	Id    int
-	Title *string
+type UpdateCategoryInput struct {
+	Title *string `json:"title,omitempty"`
 }

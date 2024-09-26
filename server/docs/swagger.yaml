@@ -7,7 +7,7 @@ definitions:
       message:
         type: string
     type: object
-  model.AddCategory:
+  model.AddCategoryInput:
     properties:
       title:
         type: string
@@ -74,10 +74,8 @@ definitions:
       websiteUrl:
         $ref: '#/definitions/url.URL'
     type: object
-  model.UpdateCategory:
+  model.UpdateCategoryInput:
     properties:
-      id:
-        type: integer
       title:
         type: string
     type: object
@@ -173,6 +171,30 @@ paths:
   /category:
     get:
       description: get categories
+      parameters:
+      - description: Search text
+        in: query
+        name: search
+        type: string
+      - description: Query offset
+        in: query
+        name: offset
+        type: integer
+      - description: Max categories to return
+        in: query
+        name: limit
+        type: integer
+      - description: Property to order by
+        in: query
+        name: order
+        type: string
+      - description: Sort ascending/descending
+        enum:
+        - ascending
+        - descending
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
@@ -195,7 +217,7 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/model.AddCategory'
+          $ref: '#/definitions/model.AddCategoryInput'
       produces:
       - application/json
       responses:
@@ -268,7 +290,7 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/model.UpdateCategory'
+          $ref: '#/definitions/model.UpdateCategoryInput'
       produces:
       - application/json
       responses:

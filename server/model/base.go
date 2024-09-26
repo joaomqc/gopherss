@@ -5,6 +5,7 @@ type BaseQuery struct {
 	Limit  *int      `form:"limit"`
 	Order  *string   `form:"order"`
 	Sort   *SortType `form:"sort"`
+	Search *string   `form:"search"`
 }
 
 type SortType string
