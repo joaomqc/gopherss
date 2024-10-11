@@ -2,13 +2,18 @@ package ctrl
 
 import (
 	"errors"
+	"gopherss/db"
 	"gopherss/httputil"
+	"gopherss/model"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type FeedsController struct{}
+
+var feedsRepository = db.FeedsRepository{}
 
 func (c FeedsController) Register(r *gin.RouterGroup) {
 	group := r.Group("/feed")
@@ -29,11 +34,22 @@ func (c FeedsController) Register(r *gin.RouterGroup) {
 //	@Description	get feeds
 //	@Tags			feed
 //	@Produce		json
-//	@Param			category	query	int	false	"Category id"
+//	@Param			query		query	model.ListFeedsInput	false	"Query"
 //	@Success		200			{array}	model.Feed
 //	@Router			/feed		[get]
 func (c FeedsController) list(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
+	query := model.ListFeedsInput{}
+	err := ctx.BindQuery(&query)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	}
+	feeds, err := feedsRepository.GetMany(query)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, feeds)
 }
 
 // create godoc
@@ -43,7 +59,7 @@ func (c FeedsController) list(ctx *gin.Context) {
 //	@Tags			feed
 //	@Accept			json
 //	@Produce		json
-//	@Param			feed	body		model.AddFeed	true	"Add feed"
+//	@Param			feed	body		model.AddFeedInput	true	"Add feed"
 //	@Success		200		{object}	model.Feed
 //	@Failure		400		{object}	httputil.HTTPError
 //	@Router			/feed	[post]
@@ -75,7 +91,26 @@ func (c FeedsController) refreshMany(ctx *gin.Context) {
 //	@Failure		404			{object}	httputil.HTTPError
 //	@Router			/feed/{id}	[get]
 func (c FeedsController) get(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
+	idStr := ctx.Param("id")
+	if idStr == "" {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is mandatory"))
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
+		return
+	}
+	feed, err := feedsRepository.Get(id)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	if feed == nil {
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("not found"))
+		return
+	}
+	ctx.JSON(http.StatusOK, feed)
 }
 
 // update godoc
@@ -85,8 +120,8 @@ func (c FeedsController) get(ctx *gin.Context) {
 //	@Tags			feed
 //	@Accept			json
 //	@Produce		json
-//	@Param        	id   		path      	int					true	"Feed ID"
-//	@Param			feed		body		model.UpdateFeed	true	"Update feed"
+//	@Param        	id   		path      	int						true	"Feed ID"
+//	@Param			feed		body		model.UpdateFeedInput	true	"Update feed"
 //	@Success		200			{object}	model.Feed
 //	@Failure		400			{object}	httputil.HTTPError
 //	@Failure		404			{object}	httputil.HTTPError
@@ -106,7 +141,22 @@ func (c FeedsController) update(ctx *gin.Context) {
 //	@Failure		404			{object}	httputil.HTTPError
 //	@Router			/feed/{id}	[delete]
 func (c FeedsController) delete(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
+	idStr := ctx.Param("id")
+	if idStr == "" {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is mandatory"))
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
+		return
+	}
+	err = feedsRepository.Delete(id)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
 }
 
 // getIcon godoc

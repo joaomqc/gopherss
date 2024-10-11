@@ -11,8 +11,10 @@ definitions:
     properties:
       title:
         type: string
+      visibility:
+        type: integer
     type: object
-  model.AddFeed:
+  model.AddFeedInput:
     properties:
       categoryId:
         type: integer
@@ -21,7 +23,7 @@ definitions:
       title:
         type: string
       visibility:
-        $ref: '#/definitions/model.Visibility'
+        $ref: '#/definitions/model.FeedVisibility'
       websiteUrl:
         $ref: '#/definitions/url.URL'
     type: object
@@ -31,6 +33,8 @@ definitions:
         type: integer
       title:
         type: string
+      visibility:
+        type: integer
     type: object
   model.Entry:
     properties:
@@ -59,6 +63,14 @@ definitions:
       title:
         type: string
     type: object
+  model.EntryStatus:
+    enum:
+    - read
+    - unread
+    type: string
+    x-enum-varnames:
+    - ReadEntryStatus
+    - UnreadEntryStatus
   model.Feed:
     properties:
       categoryId:
@@ -70,14 +82,34 @@ definitions:
       title:
         type: string
       visibility:
-        $ref: '#/definitions/model.Visibility'
+        $ref: '#/definitions/model.FeedVisibility'
       websiteUrl:
         $ref: '#/definitions/url.URL'
     type: object
+  model.FeedVisibility:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - ShowFeedVisibility
+    - ShowInCategoryFeedVisibility
+    - DoNotShowFeedVisibility
+  model.SortType:
+    enum:
+    - ascending
+    - descending
+    type: string
+    x-enum-varnames:
+    - AscendingSort
+    - DescendingSort
   model.UpdateCategoryInput:
     properties:
       title:
         type: string
+      visibility:
+        type: integer
     type: object
   model.UpdateEntriesInput:
     properties:
@@ -85,23 +117,23 @@ definitions:
         items:
           type: integer
         type: array
-      muted:
+      isMuted:
         type: boolean
-      read:
+      isRead:
         type: boolean
-      starred:
+      isStarred:
         type: boolean
     type: object
   model.UpdateEntryInput:
     properties:
-      muted:
+      isMuted:
         type: boolean
-      read:
+      isRead:
         type: boolean
-      starred:
+      isStarred:
         type: boolean
     type: object
-  model.UpdateFeed:
+  model.UpdateFeedInput:
     properties:
       categoryId:
         type: integer
@@ -110,20 +142,10 @@ definitions:
       title:
         type: string
       visibility:
-        $ref: '#/definitions/model.Visibility'
+        $ref: '#/definitions/model.FeedVisibility'
       websiteUrl:
         $ref: '#/definitions/url.URL'
     type: object
-  model.Visibility:
-    enum:
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-varnames:
-    - ShowVisibility
-    - ShowInCategoryVisibility
-    - DoNotShowVisibility
   url.URL:
     properties:
       forceQuery:
@@ -172,29 +194,30 @@ paths:
     get:
       description: get categories
       parameters:
-      - description: Search text
-        in: query
-        name: search
-        type: string
-      - description: Query offset
-        in: query
-        name: offset
-        type: integer
-      - description: Max categories to return
-        in: query
+      - in: query
         name: limit
         type: integer
-      - description: Property to order by
-        in: query
+      - in: query
+        name: offset
+        type: integer
+      - in: query
         name: order
         type: string
-      - description: Sort ascending/descending
-        enum:
+      - in: query
+        name: search
+        type: string
+      - in: query
+        name: showHidden
+        type: boolean
+      - enum:
         - ascending
         - descending
         in: query
         name: sort
         type: string
+        x-enum-varnames:
+        - AscendingSort
+        - DescendingSort
       produces:
       - application/json
       responses:
@@ -241,6 +264,10 @@ paths:
         name: id
         required: true
         type: integer
+      - description: Keep feeds
+        in: path
+        name: keepFeeds
+        type: boolean
       produces:
       - application/json
       responses:
@@ -313,45 +340,39 @@ paths:
     get:
       description: get entries
       parameters:
-      - description: Category id
-        in: query
+      - in: query
         name: category
         type: integer
-      - description: Feed id
-        in: query
+      - in: query
         name: feed
         type: integer
-      - description: Show starred only
-        in: query
-        name: starred
-        type: boolean
-      - description: Show read/unread only
-        in: query
-        name: read
-        type: boolean
-      - description: Search text
-        in: query
-        name: search
-        type: string
-      - description: Query offset
-        in: query
-        name: offset
-        type: integer
-      - description: Max entries to return
-        in: query
+      - in: query
         name: limit
         type: integer
-      - description: Property to order by
-        in: query
+      - in: query
+        name: offset
+        type: integer
+      - in: query
         name: order
         type: string
-      - description: Sort ascending/descending
-        enum:
+      - in: query
+        name: read
+        type: boolean
+      - in: query
+        name: search
+        type: string
+      - enum:
         - ascending
         - descending
         in: query
         name: sort
         type: string
+        x-enum-varnames:
+        - AscendingSort
+        - DescendingSort
+      - in: query
+        name: starred
+        type: boolean
       produces:
       - application/json
       responses:
@@ -453,14 +474,15 @@ paths:
         name: id
         required: true
         type: integer
-      - description: New status
-        enum:
+      - enum:
         - read
         - unread
         in: query
         name: as
-        required: true
         type: string
+        x-enum-varnames:
+        - ReadEntryStatus
+        - UnreadEntryStatus
       responses:
         "204":
           description: No Content
@@ -479,29 +501,24 @@ paths:
     post:
       description: mark entries as read/unread up to a timestamp
       parameters:
-      - description: Category id
-        in: query
-        name: category
-        type: integer
-      - description: Feed id
-        in: query
-        name: feed
-        type: integer
-      - description: Timestamp to mark/unread as read to
-        example: '"2006-01-02T15:04:05Z"'
-        format: date-time
-        in: query
-        name: before
-        required: true
-        type: string
-      - description: New status
-        enum:
+      - enum:
         - read
         - unread
         in: query
         name: as
-        required: true
         type: string
+        x-enum-varnames:
+        - ReadEntryStatus
+        - UnreadEntryStatus
+      - in: query
+        name: before
+        type: string
+      - in: query
+        name: category
+        type: integer
+      - in: query
+        name: feed
+        type: integer
       responses:
         "204":
           description: No Content
@@ -520,10 +537,33 @@ paths:
     get:
       description: get feeds
       parameters:
-      - description: Category id
-        in: query
+      - in: query
         name: category
         type: integer
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: offset
+        type: integer
+      - in: query
+        name: order
+        type: string
+      - in: query
+        name: search
+        type: string
+      - in: query
+        name: showHidden
+        type: boolean
+      - enum:
+        - ascending
+        - descending
+        in: query
+        name: sort
+        type: string
+        x-enum-varnames:
+        - AscendingSort
+        - DescendingSort
       produces:
       - application/json
       responses:
@@ -546,7 +586,7 @@ paths:
         name: feed
         required: true
         schema:
-          $ref: '#/definitions/model.AddFeed'
+          $ref: '#/definitions/model.AddFeedInput'
       produces:
       - application/json
       responses:
@@ -619,7 +659,7 @@ paths:
         name: feed
         required: true
         schema:
-          $ref: '#/definitions/model.UpdateFeed'
+          $ref: '#/definitions/model.UpdateFeedInput'
       produces:
       - application/json
       responses:

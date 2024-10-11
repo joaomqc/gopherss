@@ -31,15 +31,11 @@ func (c CategoriesController) Register(r *gin.RouterGroup) {
 //	@Description	get categories
 //	@Tags			category
 //	@Produce		json
-//	@Param			search		query	string			false	"Search text"
-//	@Param			offset		query	int				false	"Query offset"
-//	@Param			limit		query	int				false	"Max categories to return"
-//	@Param			order		query	string			false	"Property to order by"
-//	@Param			sort		query	model.SortType	false	"Sort ascending/descending"
+//	@Param			query		query	model.ListCategoriesInput	false	"Query"
 //	@Success		200			{array}	model.Category
 //	@Router			/category	[get]
 func (c CategoriesController) list(ctx *gin.Context) {
-	query := model.BaseQuery{}
+	query := model.ListCategoriesInput{}
 	err := ctx.BindQuery(&query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
@@ -160,7 +156,8 @@ func (c CategoriesController) update(ctx *gin.Context) {
 //	@Description	delete category
 //	@Tags			category
 //	@Produce		json
-//	@Param        	id   			path      	int	true	"Category ID"
+//	@Param        	id   			path      	int		true	"Category ID"
+//	@Param        	keepFeeds		path      	bool	false	"Keep feeds"
 //	@Success		204
 //	@Failure		404				{object}	httputil.HTTPError
 //	@Router			/category/{id}	[delete]
@@ -175,7 +172,13 @@ func (c CategoriesController) delete(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
 		return
 	}
-	err = categoriesRepository.Delete(id)
+	keepFeedsStr := ctx.Param("keepFeeds")
+	keepFeeds, err := strconv.ParseBool(keepFeedsStr)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("keepFeeds is invalid"))
+		return
+	}
+	err = categoriesRepository.Delete(id, keepFeeds)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return

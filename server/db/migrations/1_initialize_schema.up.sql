@@ -28,3 +28,5 @@ CREATE TABLE IF NOT EXISTS categories (
     title TEXT,
     visibility INTEGER
 );
+
+INSERT INTO categories (id, title, visibility) VALUES (1, "Uncategorized", 1);

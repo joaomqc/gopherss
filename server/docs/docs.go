@@ -27,27 +27,28 @@ const docTemplate = `{
                 "summary": "List categories",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Search text",
-                        "name": "search",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
-                        "description": "Query offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Max categories to return",
                         "name": "limit",
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "Property to order by",
                         "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "showHidden",
                         "in": "query"
                     },
                     {
@@ -56,7 +57,10 @@ const docTemplate = `{
                             "descending"
                         ],
                         "type": "string",
-                        "description": "Sort ascending/descending",
+                        "x-enum-varnames": [
+                            "AscendingSort",
+                            "DescendingSort"
+                        ],
                         "name": "sort",
                         "in": "query"
                     }
@@ -213,6 +217,12 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Keep feeds",
+                        "name": "keepFeeds",
+                        "in": "path"
                     }
                 ],
                 "responses": {
@@ -241,50 +251,37 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Category id",
                         "name": "category",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Feed id",
                         "name": "feed",
                         "in": "query"
                     },
                     {
-                        "type": "boolean",
-                        "description": "Show starred only",
-                        "name": "starred",
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
                         "in": "query"
                     },
                     {
                         "type": "boolean",
-                        "description": "Show read/unread only",
                         "name": "read",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search text",
                         "name": "search",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Query offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Max entries to return",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Property to order by",
-                        "name": "order",
                         "in": "query"
                     },
                     {
@@ -293,8 +290,16 @@ const docTemplate = `{
                             "descending"
                         ],
                         "type": "string",
-                        "description": "Sort ascending/descending",
+                        "x-enum-varnames": [
+                            "AscendingSort",
+                            "DescendingSort"
+                        ],
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "starred",
                         "in": "query"
                     }
                 ],
@@ -355,36 +360,32 @@ const docTemplate = `{
                 "summary": "Mark as read/unread",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Category id",
-                        "name": "category",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Feed id",
-                        "name": "feed",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "\"2006-01-02T15:04:05Z\"",
-                        "description": "Timestamp to mark/unread as read to",
-                        "name": "before",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
                         "enum": [
                             "read",
                             "unread"
                         ],
                         "type": "string",
-                        "description": "New status",
+                        "x-enum-varnames": [
+                            "ReadEntryStatus",
+                            "UnreadEntryStatus"
+                        ],
                         "name": "as",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "feed",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -513,10 +514,12 @@ const docTemplate = `{
                             "unread"
                         ],
                         "type": "string",
-                        "description": "New status",
+                        "x-enum-varnames": [
+                            "ReadEntryStatus",
+                            "UnreadEntryStatus"
+                        ],
                         "name": "as",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -551,8 +554,45 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Category id",
                         "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "showHidden",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "ascending",
+                            "descending"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "AscendingSort",
+                            "DescendingSort"
+                        ],
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -587,7 +627,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AddFeed"
+                            "$ref": "#/definitions/model.AddFeedInput"
                         }
                     }
                 ],
@@ -695,7 +735,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdateFeed"
+                            "$ref": "#/definitions/model.UpdateFeedInput"
                         }
                     }
                 ],
@@ -833,10 +873,13 @@ const docTemplate = `{
             "properties": {
                 "title": {
                     "type": "string"
+                },
+                "visibility": {
+                    "type": "integer"
                 }
             }
         },
-        "model.AddFeed": {
+        "model.AddFeedInput": {
             "type": "object",
             "properties": {
                 "categoryId": {
@@ -849,7 +892,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "visibility": {
-                    "$ref": "#/definitions/model.Visibility"
+                    "$ref": "#/definitions/model.FeedVisibility"
                 },
                 "websiteUrl": {
                     "$ref": "#/definitions/url.URL"
@@ -864,6 +907,9 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "visibility": {
+                    "type": "integer"
                 }
             }
         },
@@ -908,6 +954,17 @@ const docTemplate = `{
                 }
             }
         },
+        "model.EntryStatus": {
+            "type": "string",
+            "enum": [
+                "read",
+                "unread"
+            ],
+            "x-enum-varnames": [
+                "ReadEntryStatus",
+                "UnreadEntryStatus"
+            ]
+        },
         "model.Feed": {
             "type": "object",
             "properties": {
@@ -924,18 +981,45 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "visibility": {
-                    "$ref": "#/definitions/model.Visibility"
+                    "$ref": "#/definitions/model.FeedVisibility"
                 },
                 "websiteUrl": {
                     "$ref": "#/definitions/url.URL"
                 }
             }
         },
+        "model.FeedVisibility": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "ShowFeedVisibility",
+                "ShowInCategoryFeedVisibility",
+                "DoNotShowFeedVisibility"
+            ]
+        },
+        "model.SortType": {
+            "type": "string",
+            "enum": [
+                "ascending",
+                "descending"
+            ],
+            "x-enum-varnames": [
+                "AscendingSort",
+                "DescendingSort"
+            ]
+        },
         "model.UpdateCategoryInput": {
             "type": "object",
             "properties": {
                 "title": {
                     "type": "string"
+                },
+                "visibility": {
+                    "type": "integer"
                 }
             }
         },
@@ -948,13 +1032,13 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
-                "muted": {
+                "isMuted": {
                     "type": "boolean"
                 },
-                "read": {
+                "isRead": {
                     "type": "boolean"
                 },
-                "starred": {
+                "isStarred": {
                     "type": "boolean"
                 }
             }
@@ -962,18 +1046,18 @@ const docTemplate = `{
         "model.UpdateEntryInput": {
             "type": "object",
             "properties": {
-                "muted": {
+                "isMuted": {
                     "type": "boolean"
                 },
-                "read": {
+                "isRead": {
                     "type": "boolean"
                 },
-                "starred": {
+                "isStarred": {
                     "type": "boolean"
                 }
             }
         },
-        "model.UpdateFeed": {
+        "model.UpdateFeedInput": {
             "type": "object",
             "properties": {
                 "categoryId": {
@@ -986,25 +1070,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "visibility": {
-                    "$ref": "#/definitions/model.Visibility"
+                    "$ref": "#/definitions/model.FeedVisibility"
                 },
                 "websiteUrl": {
                     "$ref": "#/definitions/url.URL"
                 }
             }
-        },
-        "model.Visibility": {
-            "type": "integer",
-            "enum": [
-                1,
-                2,
-                3
-            ],
-            "x-enum-varnames": [
-                "ShowVisibility",
-                "ShowInCategoryVisibility",
-                "DoNotShowVisibility"
-            ]
         },
         "url.URL": {
             "type": "object",

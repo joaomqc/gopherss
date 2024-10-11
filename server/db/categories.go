@@ -7,7 +7,7 @@ import (
 
 type CategoriesRepository struct{}
 
-func (r *CategoriesRepository) GetMany(input model.BaseQuery) ([]model.Category, error) {
+func (r *CategoriesRepository) GetMany(input model.ListCategoriesInput) ([]model.Category, error) {
 	db, err := GetDb()
 	if err != nil {
 		return nil, err
@@ -43,6 +43,16 @@ func (r *CategoriesRepository) GetMany(input model.BaseQuery) ([]model.Category,
 			value: "%" + *input.Search + "%",
 		})
 	}
+
+	visibilities := []model.CategoryVisibility{model.ShowCategoryVisibility}
+	if input.ShowHidden {
+		visibilities = append(visibilities, model.DoNotShowCategoryVisibility)
+	}
+	whereClauses = append(whereClauses, whereClause{
+		field: "visibility",
+		op:    "in",
+		value: visibilities,
+	})
 
 	q, args := buildSelectQuery(selectQuery{
 		fields:       []string{"id", "title"},
@@ -137,6 +147,13 @@ func (r *CategoriesRepository) Update(id int, input model.UpdateCategoryInput) (
 		})
 	}
 
+	if input.Visibility != nil {
+		setClauses = append(setClauses, setClause{
+			field: "visibility",
+			value: *input.Visibility,
+		})
+	}
+
 	whereClauses := []whereClause{
 		{
 			field: "id",
@@ -170,9 +187,9 @@ func (r *CategoriesRepository) Insert(input model.AddCategoryInput) error {
 		return err
 	}
 
-	query := `INSERT INTO categories(title) VALUES (?)`
+	query := `INSERT INTO categories(title, visibility) VALUES (?, ?)`
 
-	_, err = db.Exec(query, input.Title)
+	_, err = db.Exec(query, input.Title, input.Visibility)
 	if err != nil {
 		return fmt.Errorf("categories Insert: %w", err)
 	}
@@ -180,13 +197,16 @@ func (r *CategoriesRepository) Insert(input model.AddCategoryInput) error {
 	return err
 }
 
-func (r *CategoriesRepository) Delete(id int) error {
+func (r *CategoriesRepository) Delete(id int, keepFeeds bool) error {
 	db, err := GetDb()
 	if err != nil {
 		return err
 	}
 
-	query := `UPDATE feeds SET category_id = NULL WHERE category_id = ?; DELETE FROM categories WHERE id = ?`
+	query := `DELETE FROM feeds WHERE category_id = ?; DELETE FROM categories WHERE id = ?`
+	if keepFeeds {
+		query = `UPDATE feeds SET category_id = 1 WHERE category_id = ?; DELETE FROM categories WHERE id = ?`
+	}
 
 	_, err = db.Exec(query, id, id)
 	if err != nil {

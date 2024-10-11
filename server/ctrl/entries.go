@@ -32,15 +32,7 @@ func (c EntriesController) Register(r *gin.RouterGroup) {
 //	@Description	get entries
 //	@Tags			entry
 //	@Produce		json
-//	@Param			category	query	int				false	"Category id"
-//	@Param			feed		query	int				false	"Feed id"
-//	@Param			starred		query	bool			false	"Show starred only"
-//	@Param			read		query	bool			false	"Show read/unread only"
-//	@Param			search		query	string			false	"Search text"
-//	@Param			offset		query	int				false	"Query offset"
-//	@Param			limit		query	int				false	"Max entries to return"
-//	@Param			order		query	string			false	"Property to order by"
-//	@Param			sort		query	model.SortType	false	"Sort ascending/descending"
+//	@Param			query		query	model.ListEntriesInput	false	"Query"
 //	@Success		200			{array}	model.Entry
 //	@Router			/entry		[get]
 func (c EntriesController) list(ctx *gin.Context) {
@@ -89,10 +81,7 @@ func (c EntriesController) updateMany(ctx *gin.Context) {
 //	@Summary		Mark as read/unread
 //	@Description	mark entries as read/unread up to a timestamp
 //	@Tags			entry
-//	@Param			category	query	int					false	"Category id"
-//	@Param			feed		query	int					false	"Feed id"
-//	@Param			before		query	string				true	"Timestamp to mark/unread as read to"	format(date-time)	example("2006-01-02T15:04:05Z")
-//	@Param			as			query	model.EntryStatus	true	"New status"
+//	@Param			query		query	model.MarkEntriesInput	false	"Query"
 //	@Success		204
 //	@Failure		400			{object}	httputil.HTTPError
 //	@Failure		404			{object}	httputil.HTTPError
@@ -192,8 +181,8 @@ func (c EntriesController) update(ctx *gin.Context) {
 //	@Summary		Mark as read/unread
 //	@Description	mark entry as read/unread
 //	@Tags			entry
-//	@Param        	id  				path    int					true	"Entry ID"
-//	@Param			as					query	model.EntryStatus	true	"New status"
+//	@Param        	id  				path    	int						true	"Entry ID"
+//	@Param			query				query		model.MarkEntryInput	false	"Query"
 //	@Success		204
 //	@Failure		400					{object}	httputil.HTTPError
 //	@Failure		404					{object}	httputil.HTTPError
