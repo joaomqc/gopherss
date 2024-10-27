@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"gopherss/model"
+	"strings"
 )
 
 type EntriesRepository struct{}
@@ -82,7 +83,7 @@ func (r *EntriesRepository) GetMany(input model.ListEntriesInput) ([]model.Entry
 	}
 
 	q, args := buildSelectQuery(selectQuery{
-		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "is_muted", "original_id", "feed_id"},
+		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "original_id", "feed_id"},
 		table:        "entries",
 		whereClauses: whereClauses,
 		joinClauses: []joinClause{{
@@ -113,7 +114,6 @@ func (r *EntriesRepository) GetMany(input model.ListEntriesInput) ([]model.Entry
 			&entry.CollectedOn,
 			&entry.IsRead,
 			&entry.IsStarred,
-			&entry.IsMuted,
 			&entry.OriginalId,
 			&entry.FeedId)
 
@@ -149,13 +149,6 @@ func (r *EntriesRepository) UpdateMany(input model.UpdateEntriesInput) error {
 		setClauses = append(setClauses, setClause{
 			field: "is_starred",
 			value: *input.IsStarred,
-		})
-	}
-
-	if input.IsMuted != nil {
-		setClauses = append(setClauses, setClause{
-			field: "is_muted",
-			value: *input.IsMuted,
 		})
 	}
 
@@ -200,13 +193,6 @@ func (r *EntriesRepository) Update(id int, input model.UpdateEntryInput) (bool, 
 		setClauses = append(setClauses, setClause{
 			field: "is_starred",
 			value: *input.IsStarred,
-		})
-	}
-
-	if input.IsMuted != nil {
-		setClauses = append(setClauses, setClause{
-			field: "is_muted",
-			value: *input.IsMuted,
 		})
 	}
 
@@ -365,7 +351,7 @@ func (r *EntriesRepository) Get(id int) (*model.Entry, error) {
 	}}
 
 	q, args := buildSelectQuery(selectQuery{
-		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "is_muted", "original_id", "feed_id"},
+		fields:       []string{"id", "title", "content", "link", "author", "published_on", "collected_on", "is_read", "is_starred", "original_id", "feed_id"},
 		table:        "entries",
 		whereClauses: whereClauses,
 	})
@@ -393,7 +379,6 @@ func (r *EntriesRepository) Get(id int) (*model.Entry, error) {
 		&entry.PublishedOn,
 		&entry.CollectedOn,
 		&entry.IsRead,
-		&entry.IsMuted,
 		&entry.IsStarred,
 		&entry.OriginalId,
 		&entry.FeedId)
@@ -403,4 +388,28 @@ func (r *EntriesRepository) Get(id int) (*model.Entry, error) {
 	}
 
 	return &entry, nil
+}
+
+func (r *EntriesRepository) InsertMany(entries []model.Entry) error {
+	db, err := GetDb()
+	if err != nil {
+		return err
+	}
+
+	inserts := []string{}
+	vals := []any{}
+
+	for _, entry := range entries {
+		inserts = append(inserts, "(?, ?, ?, ?, ?, ?, ?, ?)")
+		vals = append(vals, entry.Title, entry.Content, entry.Link, entry.Author, entry.PublishedOn, entry.CollectedOn, entry.OriginalId, entry.FeedId)
+	}
+
+	query := fmt.Sprintf("INSERT INTO entries(title, content, link, author, published_on, colected_on, original_id, feed_id) VALUES %s", strings.Join(inserts, ", "))
+
+	_, err = db.Exec(query, vals...)
+	if err != nil {
+		return fmt.Errorf("entries InsertMany: %w", err)
+	}
+
+	return err
 }

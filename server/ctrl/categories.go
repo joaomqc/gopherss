@@ -2,9 +2,9 @@ package ctrl
 
 import (
 	"errors"
-	"gopherss/db"
 	"gopherss/httputil"
 	"gopherss/model"
+	"gopherss/svc"
 	"net/http"
 	"strconv"
 
@@ -13,7 +13,7 @@ import (
 
 type CategoriesController struct{}
 
-var categoriesRepository = db.CategoriesRepository{}
+var categoriesService = svc.CategoriesService{}
 
 func (c CategoriesController) Register(r *gin.RouterGroup) {
 	group := r.Group("/category")
@@ -41,7 +41,7 @@ func (c CategoriesController) list(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	categories, err := categoriesRepository.GetMany(query)
+	categories, err := categoriesService.GetMany(query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -67,7 +67,7 @@ func (c CategoriesController) create(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	err = categoriesRepository.Insert(body)
+	err = categoriesService.Create(body)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -96,7 +96,7 @@ func (c CategoriesController) get(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
 		return
 	}
-	category, err := categoriesRepository.Get(id)
+	category, err := categoriesService.Get(id)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -138,7 +138,7 @@ func (c CategoriesController) update(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	updated, err := categoriesRepository.Update(id, body)
+	updated, err := categoriesService.Update(id, body)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -178,7 +178,7 @@ func (c CategoriesController) delete(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, errors.New("keepFeeds is invalid"))
 		return
 	}
-	err = categoriesRepository.Delete(id, keepFeeds)
+	err = categoriesService.Delete(id, keepFeeds)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return

@@ -1,7 +1,6 @@
-package rss
+package svc
 
 import (
-	"fmt"
 	"gopherss/model"
 	"net/url"
 	"time"
@@ -9,19 +8,22 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-func parseFeed(feedUrl url.URL) (*gofeed.Feed, error) {
+type RssService struct{}
+
+func (s RssService) ParseFeed(feed model.Feed) (*gofeed.Feed, error) {
 	fp := gofeed.NewParser()
 	// TODO support auth
-	feed, err := fp.ParseURL(feedUrl.String())
+	parsedFeed, err := fp.ParseURL(feed.FeedUrl.String())
 	if err != nil {
 		return nil, err
 	}
-	return feed, nil
+
+	return parsedFeed, nil
 }
 
-func toEntries(feed model.Feed, items []*gofeed.Item) ([]model.Entry, error) {
+func (s RssService) GetEntries(feed model.Feed, parsedFeed gofeed.Feed) ([]model.Entry, error) {
 	entries := []model.Entry{}
-	for _, item := range items {
+	for _, item := range parsedFeed.Items {
 		link, err := url.Parse(item.Link)
 		if err != nil {
 			return nil, err
@@ -35,26 +37,9 @@ func toEntries(feed model.Feed, items []*gofeed.Item) ([]model.Entry, error) {
 			CollectedOn: time.Now(),
 			IsRead:      false,
 			IsStarred:   false,
-			IsMuted:     false,
 			OriginalId:  item.GUID,
 			FeedId:      feed.Id,
 		})
 	}
-
 	return entries, nil
-}
-
-func refreshFeed(feed model.Feed) error {
-	parsedFeed, err := parseFeed(feed.FeedUrl)
-	if err != nil {
-		return nil
-	}
-
-	entries, err := toEntries(feed, parsedFeed.Items)
-	if err != nil {
-		return err
-	}
-	//TODO do something with the entries
-	fmt.Println(entries)
-	return nil
 }

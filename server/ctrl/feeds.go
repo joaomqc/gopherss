@@ -2,9 +2,9 @@ package ctrl
 
 import (
 	"errors"
-	"gopherss/db"
 	"gopherss/httputil"
 	"gopherss/model"
+	"gopherss/svc"
 	"net/http"
 	"strconv"
 
@@ -13,7 +13,7 @@ import (
 
 type FeedsController struct{}
 
-var feedsRepository = db.FeedsRepository{}
+var feedsService = svc.FeedsService{}
 
 func (c FeedsController) Register(r *gin.RouterGroup) {
 	group := r.Group("/feed")
@@ -44,7 +44,7 @@ func (c FeedsController) list(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	feeds, err := feedsRepository.GetMany(query)
+	feeds, err := feedsService.GetMany(query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -64,7 +64,18 @@ func (c FeedsController) list(ctx *gin.Context) {
 //	@Failure		400		{object}	httputil.HTTPError
 //	@Router			/feed	[post]
 func (c FeedsController) create(ctx *gin.Context) {
-	httputil.NewError(ctx, http.StatusNotImplemented, errors.New("not implemented"))
+	body := model.AddFeedInput{}
+	err := ctx.BindJSON(&body)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
+		return
+	}
+	id, err := feedsService.Create(body)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"id": id})
 }
 
 // refreshMany godoc
@@ -101,7 +112,7 @@ func (c FeedsController) get(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
 		return
 	}
-	feed, err := feedsRepository.Get(id)
+	feed, err := feedsService.Get(id)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -151,7 +162,7 @@ func (c FeedsController) delete(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
 		return
 	}
-	err = feedsRepository.Delete(id)
+	err = feedsService.Delete(id)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return

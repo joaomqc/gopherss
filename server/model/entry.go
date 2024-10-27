@@ -15,7 +15,6 @@ type Entry struct {
 	CollectedOn time.Time `json:"collectedOn"`
 	IsRead      bool      `json:"isRead"`
 	IsStarred   bool      `json:"isStarred"`
-	IsMuted     bool      `json:"isMuted"`
 	OriginalId  string    `json:"originalId"`
 	FeedId      int       `json:"feedId"`
 }
@@ -24,13 +23,11 @@ type UpdateEntriesInput struct {
 	Ids       []int `json:"ids"`
 	IsRead    *bool `json:"isRead,omitempty"`
 	IsStarred *bool `json:"isStarred,omitempty"`
-	IsMuted   *bool `json:"isMuted,omitempty"`
 }
 
 type UpdateEntryInput struct {
 	IsRead    *bool `json:"isRead,omitempty"`
 	IsStarred *bool `json:"isStarred,omitempty"`
-	IsMuted   *bool `json:"isMuted,omitempty"`
 }
 
 type ListEntriesInput struct {

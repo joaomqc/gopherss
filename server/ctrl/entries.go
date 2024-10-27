@@ -2,9 +2,9 @@ package ctrl
 
 import (
 	"errors"
-	"gopherss/db"
 	"gopherss/httputil"
 	"gopherss/model"
+	"gopherss/svc"
 	"net/http"
 	"strconv"
 
@@ -13,7 +13,7 @@ import (
 
 type EntriesController struct{}
 
-var entriesRepository = db.EntriesRepository{}
+var entriesService = svc.EntriesService{}
 
 func (c EntriesController) Register(r *gin.RouterGroup) {
 	group := r.Group("/entry")
@@ -42,7 +42,7 @@ func (c EntriesController) list(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	entries, err := entriesRepository.GetMany(query)
+	entries, err := entriesService.GetMany(query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -68,7 +68,7 @@ func (c EntriesController) updateMany(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	err = entriesRepository.UpdateMany(body)
+	err = entriesService.UpdateMany(body)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -93,7 +93,7 @@ func (c EntriesController) markMany(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	err = entriesRepository.MarkMany(query)
+	err = entriesService.MarkMany(query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -122,7 +122,7 @@ func (c EntriesController) get(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, errors.New("id is invalid"))
 		return
 	}
-	entry, err := entriesRepository.Get(id)
+	entry, err := entriesService.Get(id)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -164,7 +164,7 @@ func (c EntriesController) update(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	updated, err := entriesRepository.Update(id, body)
+	updated, err := entriesService.Update(id, body)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -204,7 +204,7 @@ func (c EntriesController) mark(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
-	updated, err := entriesRepository.Mark(id, query)
+	updated, err := entriesService.Mark(id, query)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return

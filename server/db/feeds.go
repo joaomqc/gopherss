@@ -65,7 +65,7 @@ func (r *FeedsRepository) GetMany(input model.ListFeedsInput) ([]model.Feed, err
 	})
 
 	q, args := buildSelectQuery(selectQuery{
-		fields:       []string{"id", "title", "feedUrl", "websiteUrl", "categoryId", "visibility"},
+		fields:       []string{"id", "title", "feedUrl", "websiteUrl", "categoryId", "visibility", "is_muted"},
 		table:        "feeds",
 		whereClauses: whereClauses,
 		orderBy:      &orderBy,
@@ -88,7 +88,8 @@ func (r *FeedsRepository) GetMany(input model.ListFeedsInput) ([]model.Feed, err
 			&feed.FeedUrl,
 			&feed.WebsiteUrl,
 			&feed.CategoryId,
-			&feed.Visibility)
+			&feed.Visibility,
+			&feed.IsMuted)
 
 		if err != nil {
 			return nil, fmt.Errorf("feeds GetMany: %w", err)
@@ -116,7 +117,7 @@ func (r *FeedsRepository) Get(id int) (*model.Feed, error) {
 	}}
 
 	q, args := buildSelectQuery(selectQuery{
-		fields:       []string{"id", "title", "feedUrl", "websiteUrl", "categoryId", "visibility"},
+		fields:       []string{"id", "title", "feedUrl", "websiteUrl", "categoryId", "visibility", "is_muted"},
 		table:        "feeds",
 		whereClauses: whereClauses,
 	})
@@ -141,13 +142,31 @@ func (r *FeedsRepository) Get(id int) (*model.Feed, error) {
 		&feed.FeedUrl,
 		&feed.WebsiteUrl,
 		&feed.CategoryId,
-		&feed.Visibility)
+		&feed.Visibility,
+		&feed.IsMuted)
 
 	if err != nil {
 		return nil, fmt.Errorf("feeds Get: %w", err)
 	}
 
 	return &feed, nil
+}
+
+func (r *FeedsRepository) Insert(input model.Feed) (int, error) {
+	db, err := GetDb()
+	if err != nil {
+		return 0, err
+	}
+
+	query := `INSERT INTO feeds(title, feedUrl, websiteUrl, categoryId) VALUES (?, ?, ?, ?)`
+
+	var id int
+	err = db.QueryRow(query, input.Title, input.FeedUrl, input.WebsiteUrl, input.CategoryId, input.Visibility).Scan(&id)
+	if err != nil {
+		return 0, fmt.Errorf("feeds Insert: %w", err)
+	}
+
+	return id, nil
 }
 
 func (r *FeedsRepository) Delete(id int) error {

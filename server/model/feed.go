@@ -9,22 +9,20 @@ type Feed struct {
 	WebsiteUrl url.URL        `json:"websiteUrl"`
 	CategoryId int            `json:"categoryId"`
 	Visibility FeedVisibility `json:"visibility"`
+	IsMuted    bool           `json:"isMuted"`
 }
 
 type AddFeedInput struct {
-	Title      string         `json:"title"`
-	FeedUrl    url.URL        `json:"feedUrl"`
-	WebsiteUrl url.URL        `json:"websiteUrl"`
-	CategoryId int            `json:"categoryId"`
-	Visibility FeedVisibility `json:"visibility"`
+	FeedUrl    url.URL `json:"feedUrl"`
+	CategoryId int     `json:"categoryId"`
 }
 
 type UpdateFeedInput struct {
 	Title      *string         `json:"title,omitempty"`
 	FeedUrl    *url.URL        `json:"feedUrl,omitempty"`
-	WebsiteUrl *url.URL        `json:"websiteUrl,omitempty"`
 	CategoryId *int            `json:"categoryId,omitempty"`
 	Visibility *FeedVisibility `json:"visibility,omitempty"`
+	IsMuted    *bool           `json:"isMuted,omitempty"`
 }
 
 type ListFeedsInput struct {
