@@ -887,15 +887,6 @@ const docTemplate = `{
                 },
                 "feedUrl": {
                     "$ref": "#/definitions/url.URL"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "visibility": {
-                    "$ref": "#/definitions/model.FeedVisibility"
-                },
-                "websiteUrl": {
-                    "$ref": "#/definitions/url.URL"
                 }
             }
         },
@@ -930,9 +921,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "isMuted": {
-                    "type": "boolean"
                 },
                 "isRead": {
                     "type": "boolean"
@@ -976,6 +964,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "isMuted": {
+                    "type": "boolean"
                 },
                 "title": {
                     "type": "string"
@@ -1032,9 +1023,6 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
-                "isMuted": {
-                    "type": "boolean"
-                },
                 "isRead": {
                     "type": "boolean"
                 },
@@ -1046,9 +1034,6 @@ const docTemplate = `{
         "model.UpdateEntryInput": {
             "type": "object",
             "properties": {
-                "isMuted": {
-                    "type": "boolean"
-                },
                 "isRead": {
                     "type": "boolean"
                 },
@@ -1066,14 +1051,14 @@ const docTemplate = `{
                 "feedUrl": {
                     "$ref": "#/definitions/url.URL"
                 },
+                "isMuted": {
+                    "type": "boolean"
+                },
                 "title": {
                     "type": "string"
                 },
                 "visibility": {
                     "$ref": "#/definitions/model.FeedVisibility"
-                },
-                "websiteUrl": {
-                    "$ref": "#/definitions/url.URL"
                 }
             }
         },

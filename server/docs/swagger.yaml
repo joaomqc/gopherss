@@ -20,12 +20,6 @@ definitions:
         type: integer
       feedUrl:
         $ref: '#/definitions/url.URL'
-      title:
-        type: string
-      visibility:
-        $ref: '#/definitions/model.FeedVisibility'
-      websiteUrl:
-        $ref: '#/definitions/url.URL'
     type: object
   model.Category:
     properties:
@@ -48,8 +42,6 @@ definitions:
         type: integer
       id:
         type: integer
-      isMuted:
-        type: boolean
       isRead:
         type: boolean
       isStarred:
@@ -79,6 +71,8 @@ definitions:
         $ref: '#/definitions/url.URL'
       id:
         type: integer
+      isMuted:
+        type: boolean
       title:
         type: string
       visibility:
@@ -117,8 +111,6 @@ definitions:
         items:
           type: integer
         type: array
-      isMuted:
-        type: boolean
       isRead:
         type: boolean
       isStarred:
@@ -126,8 +118,6 @@ definitions:
     type: object
   model.UpdateEntryInput:
     properties:
-      isMuted:
-        type: boolean
       isRead:
         type: boolean
       isStarred:
@@ -139,12 +129,12 @@ definitions:
         type: integer
       feedUrl:
         $ref: '#/definitions/url.URL'
+      isMuted:
+        type: boolean
       title:
         type: string
       visibility:
         $ref: '#/definitions/model.FeedVisibility'
-      websiteUrl:
-        $ref: '#/definitions/url.URL'
     type: object
   url.URL:
     properties:

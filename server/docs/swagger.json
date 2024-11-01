@@ -880,15 +880,6 @@
                 },
                 "feedUrl": {
                     "$ref": "#/definitions/url.URL"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "visibility": {
-                    "$ref": "#/definitions/model.FeedVisibility"
-                },
-                "websiteUrl": {
-                    "$ref": "#/definitions/url.URL"
                 }
             }
         },
@@ -923,9 +914,6 @@
                 },
                 "id": {
                     "type": "integer"
-                },
-                "isMuted": {
-                    "type": "boolean"
                 },
                 "isRead": {
                     "type": "boolean"
@@ -969,6 +957,9 @@
                 },
                 "id": {
                     "type": "integer"
+                },
+                "isMuted": {
+                    "type": "boolean"
                 },
                 "title": {
                     "type": "string"
@@ -1025,9 +1016,6 @@
                         "type": "integer"
                     }
                 },
-                "isMuted": {
-                    "type": "boolean"
-                },
                 "isRead": {
                     "type": "boolean"
                 },
@@ -1039,9 +1027,6 @@
         "model.UpdateEntryInput": {
             "type": "object",
             "properties": {
-                "isMuted": {
-                    "type": "boolean"
-                },
                 "isRead": {
                     "type": "boolean"
                 },
@@ -1059,14 +1044,14 @@
                 "feedUrl": {
                     "$ref": "#/definitions/url.URL"
                 },
+                "isMuted": {
+                    "type": "boolean"
+                },
                 "title": {
                     "type": "string"
                 },
                 "visibility": {
                     "$ref": "#/definitions/model.FeedVisibility"
-                },
-                "websiteUrl": {
-                    "$ref": "#/definitions/url.URL"
                 }
             }
         },
